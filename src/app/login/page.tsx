@@ -1,6 +1,17 @@
 import { GalleryVerticalEnd } from "lucide-react";
-import { LoginForm } from "@/components/login-form";
-export default function LoginPage() {
+import AuthForm from "@/components/Authentication/AuthForm";
+import { redirect } from "next/navigation";
+import { createClient } from "@/utils/supabase/server";
+
+export default async function LoginPage() {
+
+  // if user is logged in redirect to home page
+  const supabase = await createClient();
+  const { data, error } = await supabase.auth.getUser();
+  if (!error || data?.user) {
+    redirect("/dashboard");
+  }
+
   return (
     <div className="grid min-h-svh lg:grid-cols-2">
       <div className="flex flex-col gap-4 p-6 md:p-10">
@@ -14,7 +25,8 @@ export default function LoginPage() {
         </div>
         <div className="flex flex-1 items-center justify-center">
           <div className="w-full max-w-xs">
-            <LoginForm />
+            {/* <LoginForm /> */}
+            <AuthForm />
           </div>
         </div>
       </div>
