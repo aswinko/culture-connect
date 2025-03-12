@@ -136,10 +136,10 @@ export const LoginForm = ({ className }: { className?: string }) => {
       toast.error(String(error), { id: toastId });
       setLoading(false);
     } else {
-      toast.success("Signed in successfully!", {
-        id: toastId,
-      });
-      setLoading(false);
+        toast.success("Signed in successfully!", {
+          id: toastId,
+        });
+        setLoading(false);
       redirect("/dashboard");
     }
     // setLoading(false);

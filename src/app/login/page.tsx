@@ -2,6 +2,7 @@ import { GalleryVerticalEnd } from "lucide-react";
 import AuthForm from "@/components/Authentication/AuthForm";
 import { redirect } from "next/navigation";
 import { createClient } from "@/utils/supabase/server";
+import Image from "next/image";
 
 export default async function LoginPage() {
 
@@ -9,7 +10,7 @@ export default async function LoginPage() {
   const supabase = await createClient();
   const { data, error } = await supabase.auth.getUser();
   if (!error || data?.user) {
-    redirect("/dashboard");
+    redirect("/");
   }
 
   return (
@@ -31,7 +32,9 @@ export default async function LoginPage() {
         </div>
       </div>
       <div className="relative hidden bg-muted lg:block">
-        <img
+        <Image
+          width="100"
+          height="100"
           src="/next.svg"
           alt="Image"
           className="absolute inset-0 h-full w-full object-contain p-4 dark:brightness-[0.2] dark:grayscale"
