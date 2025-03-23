@@ -131,17 +131,31 @@ export const LoginForm = ({ className }: { className?: string }) => {
     formData.append("email", values.email);
     formData.append("password", values.password);
 
-    const { success, error } = await login(formData);
+    const { success, data, error } = await login(formData);
     if (!success) {
       toast.error(String(error), { id: toastId });
       setLoading(false);
+      return;
+    } 
+    toast.success("Signed in successfully!", {
+      id: toastId,
+    });
+
+    console.log(data);
+    
+
+    if (data && typeof data === 'object' && 'role' in data) {
+      if (data.role === "user") {
+        redirect("/");
+      } else {
+        redirect("/admin");
+      }
     } else {
-        toast.success("Signed in successfully!", {
-          id: toastId,
-        });
-        setLoading(false);
-      redirect("/dashboard");
+      toast.error("Invalid user data", { id: toastId });
     }
+
+    setLoading(false);
+      // redirect("/");
     // setLoading(false);
   }
 

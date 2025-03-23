@@ -3,20 +3,21 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { ToggleTheme } from "./toggle-theme"
-import { createClient } from "@/utils/supabase/server"
-import { ProfileDropdown } from "./Profile-Dropdown"
+// import { createClient } from "@/utils/supabase/server"
+// import { ProfileDropdown } from "./Profile-Dropdown"
+import AuthStatus from "../Authentication/AuthStatus"
+export default function Navbar() {
+  // const supabase = await createClient()
+  // const { data } = await supabase.auth.getUser(); // ✅ Fetch user on the server
 
-export default async function Navbar() {
-  const supabase = await createClient()
-
-  const { data } = await supabase.auth.getUser()
+  // const { data } = await supabase.auth.getUser()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
-        <Link href="#" className="flex items-center gap-2" prefetch={false}>
+        <Link href="/" className="flex items-center gap-2" prefetch={false}>
           <MountainIcon className="h-6 w-6" />
-          <span className="sr-only">Acme Inc</span>
+          <span className="sr-only">Culture Connect</span>
         </Link>
         <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
           <div className="relative">
@@ -29,7 +30,8 @@ export default async function Navbar() {
             {/* <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" /> */}
             <ToggleTheme />
           </div>
-          {data?.user ? (
+          <AuthStatus />
+          {/* {data?.user ? (
             <ProfileDropdown />
           ) : (<Link
             href="/login"
@@ -37,7 +39,7 @@ export default async function Navbar() {
             prefetch={false}
           >
             Login
-          </Link>)}
+          </Link>)} */}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full md:hidden">

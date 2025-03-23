@@ -3,14 +3,21 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Star } from "lucide-react"; // For rating icon
 import Image from "next/image";
 
-export function EventCard({title, description, price, imageUrl}) {
+interface EventCardProps {
+  title: string;
+  description: string;
+  price: number;
+  imageUrl: string;
+}
+
+export function EventCard({ title, description, price, imageUrl }: EventCardProps) {
   return (
     <Card className="w-full md:w-[300px] overflow-hidden shadow-lg gap-2 rounded-none py-4">
       {/* Event Image */}
       <div className="relative h-[180px] w-full">
         <Image
         className="px-4"
-          src={imageUrl} // Replace with your image URL
+          src={imageUrl || "/no-image.png"} // Replace with your image URL
           alt="Event Image"
           layout="fill"
           objectFit="contain"

@@ -33,11 +33,10 @@ export default async function LoginPage() {
       </div>
       <div className="relative hidden bg-muted lg:block">
         <Image
-          width="100"
-          height="100"
-          src="/next.svg"
+          fill
+          src="/auth.jpg"
           alt="Image"
-          className="absolute inset-0 h-full w-full object-contain p-4 dark:brightness-[0.2] dark:grayscale"
+          className="absolute inset-0 h-full w-full object-cover dark:brightness-[0.2] dark:grayscale"
         />
       </div>
     </div>
