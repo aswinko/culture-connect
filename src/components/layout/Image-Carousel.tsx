@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/carousel"
 import Image from "next/image"
 
-const imageData = ["/img-slider1.png", "/img-slider2.png", "/img-slider3.png", "/img-slider4.png"];
+const imageData = ["/cc1.jpg", "/cc2.jpg", "/cc3.jpg"];
 
 export function ImageCarousel() {
   const plugin = React.useRef(

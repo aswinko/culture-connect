@@ -97,7 +97,7 @@ export async function getAllEvents() {
       .order("created_at", { ascending: false }); // ✅ Sort by latest products first
   
     if (error) {
-      console.error("Error fetching products:", error.message);
+      console.error("Error fetching events:", error.message);
       return [];
     }
   
