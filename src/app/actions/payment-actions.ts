@@ -1,43 +1,32 @@
-"use server"
+"use server";
 
-import { createClient } from "@/utils/supabase/server"
+import { createClient } from "@/utils/supabase/server";
 
-export async function payBidDeposit({
-  bidId,
-  userId,
-  eventId,
-  amount,
-}: {
-  bidId: string
-  userId: string
-  eventId: string
-  amount: number
-}) {
-  const supabase = await createClient()
+type Payment = {
+  order_id: string;
+  payment_id: string;
+  signature: string;
+  status: string;
+  booking_id: string;
+  event_id: string;
+  user_id: string;
+  advance_amount: number;
+};
 
-  // Insert payment into payments table
-  const { error: insertError } = await supabase.from("payments").insert({
-    bid_id: bidId,
-    user_id: userId,
-    event_id: eventId,
-    amount,
-    payment_date: new Date(),
-    status: "success",
-  })
+export async function createPayment(payment: Payment) {
+  const supabase = await createClient();
 
-  if (insertError) {
-    throw new Error(insertError.message)
+  const { data, error } = await supabase.from("payments").insert([payment]);
+
+  if (error) {
+    return { data, error };
   }
 
-  // Update event's deposit_paid status to true
-  const { error: updateError } = await supabase
-    .from("events")
-    .update({ deposit_paid: true })
-    .eq("id", eventId)
+  // Update booking status to "paid"
+  const { error: bookingError } = await supabase
+    .from("booking")
+    .update({ status: "paid" })
+    .eq("id", payment.booking_id);
 
-  if (updateError) {
-    throw new Error(updateError.message)
-  }
-
-  return { success: true }
+  return { data, error: bookingError };
 }

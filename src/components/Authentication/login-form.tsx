@@ -151,7 +151,7 @@ export const LoginForm = ({ className }: { className?: string }) => {
         redirect("/admin");
       }
     } else {
-      toast.error("Invalid user data", { id: toastId });
+      toast.error("Invalid user data", { id: toastId });  
     }
 
     setLoading(false);

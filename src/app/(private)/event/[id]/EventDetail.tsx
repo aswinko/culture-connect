@@ -1,65 +1,22 @@
 "use client"
 
-import { useState, useEffect, useId } from "react"
 import Image from "next/image"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
-import { ChevronLeft, Calendar, Clock, MapPin, Users, Info, Star, Gavel, AlertTriangle, Timer } from "lucide-react"
+import { ChevronLeft, Info, Star } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Separator } from "@/components/ui/separator"
 import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
-import { Input } from "@/components/ui/input"
-import { Label } from "@/components/ui/label"
-import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
-} from "@/components/ui/dialog"
-import { Progress } from "@/components/ui/progress"
-// import { Header } from "@/components/header"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
-import { format, formatDistanceToNow } from "date-fns"
-import { toast } from "sonner"
 import { Event } from "@/types/Event"
-import { placeBid } from "@/app/actions/bid-actions"
 
 
-const EventDetail = ({ event, userId, bids }: { event: Event; userId: string; bids: {id: string; userName: string; time: Date; amount: number; status: string;}[] }) => {
-    const [bidAmount, setBidAmount] = useState<number>(event ? event.current_bid + 500 : 0);
-    const [timeLeft, setTimeLeft] = useState<string>("");
-    const [isDialogOpen, setIsDialogOpen] = useState<boolean>(false);
-    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
-    const toastId = useId()
+const EventDetail = ({ event }: { event: Event;}) => {
+    // const toastId = useId()
   
     const router = useRouter()
-    // const { toast } = useToast()
-  
-    // Calculate time left for bidding
-    useEffect(() => {
-      if (!event) return
-  
-      const updateTimeLeft = () => {
-        const now = new Date()
-        if (now > event?.bidding_ends_at) {
-          setTimeLeft("Bidding closed")
-          return
-        }
-  
-        setTimeLeft(formatDistanceToNow(event?.bidding_ends_at, { addSuffix: true }))
-      }
-  
-    //   updateTimeLeft()
-      const interval = setInterval(updateTimeLeft, 60000) // Update every minute
-  
-      return () => clearInterval(interval)
-    }, [event])
   
     if (!event) {
       return (
@@ -75,57 +32,13 @@ const EventDetail = ({ event, userId, bids }: { event: Event; userId: string; bi
       )
     }
   
-    // Calculate bid progress percentage
-    const bidProgressPercentage = Math.min(
-      Math.max(((event?.current_bid - event?.starting_price) / (event?.ending_price - event?.starting_price)) * 100, 0),
-      100,
-    )
-
-
-  
-    const handleBidSubmit = async () => {
-        if (!event) return
-      
-        if (bidAmount <= event.current_bid) {
-          toast.warning(
-            `Your bid must be higher than the current bid of ₹{event.current_bid.toLocaleString()}.`,
-            { id: toastId }
-          )
-          return
-        }
-      
-        setIsSubmitting(true)
-      
-        try {
-        if (!event?.id) {
-            toast.error("Event ID is not available.", { id: toastId });
-            return;
-            }
-          const result = await placeBid(event?.id, bidAmount, userId)
-      
-          if (!result.success) {
-            toast.error(result.message || "Failed to place bid.", { id: toastId })
-            return
-          }
-      
-          toast.success(
-            `You are now the highest bidder at ₹{bidAmount.toLocaleString()}.`,
-            { id: toastId }
-          )
-          setIsDialogOpen(false)
-        // eslint-disable-next-line @typescript-eslint/no-unused-vars
-        } catch (err) {
-          toast.error("Something went wrong while placing your bid.", { id: toastId })
-        } finally {
-          setIsSubmitting(false)
-        }
-      }
+    function handleCheckout(eventId: string) {
+      router.push(`/checkout/${eventId}`)
+    }
       
   return (
     <>
-      {/* <Header /> */}
       <div className="container mx-auto px-4 py-8 max-w-7xl">
-        {/* Breadcrumb */}
         <div className="mb-6">
           <Link href="/all-events" className="flex items-center text-sm text-muted-foreground hover:text-primary">
             <ChevronLeft className="h-4 w-4 mr-1" />
@@ -148,111 +61,34 @@ const EventDetail = ({ event, userId, bids }: { event: Event; userId: string; bi
             </div>
           </div>
 
-          {/* Bidding Card */}
           <div>
             <Card className="sticky top-20">
               <CardHeader>
-                <CardTitle>Event Bidding</CardTitle>
+                <CardTitle>Total Price</CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
                 <div className="space-y-2">
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Starting Price</span>
-                    <span>₹{event?.starting_price?.toLocaleString()}</span>
+                    <span className="text-muted-foreground">Subtotal Price</span>
+                    <span>₹{event?.price?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between">
-                    <span className="text-muted-foreground">Buy Now Price</span>
-                    <span>₹{event?.ending_price?.toLocaleString()}</span>
+                    <span className="text-muted-foreground">GST</span>
+                    <span>₹{event?.gst?.toLocaleString() || 0}</span>
                   </div>
                   <Separator />
                   <div className="flex justify-between font-bold">
-                    <span>Current Bid</span>
-                    <span className="text-primary">₹{event?.current_bid?.toLocaleString()}</span>
+                    <span>Total Price</span>
+                    <span className="text-primary">₹{event?.price?.toLocaleString()}</span>
                   </div>
                   <div className="flex justify-between text-sm">
-                    {/* <span className="text-muted-foreground">Bid by {event?.bids[0]?.userName}</span> */}
-                    <span className="text-muted-foreground">
-                      {/* {formatDistanceToNow(event?.bids[0]?.time, { addSuffix: true })} */}
-                    </span>
+
                   </div>
                 </div>
-
                 <div className="space-y-2">
-                  <div className="flex justify-between text-sm">
-                    <span>Bid Progress</span>
-                    <span>{Math.round(bidProgressPercentage)}%</span>
-                  </div>
-                  <Progress value={bidProgressPercentage} className="h-2" />
-                </div>
-
-                <div className="flex items-center gap-2 text-sm">
-                  <Timer className="h-4 w-4 text-amber-500" />
-                  <span>Bidding ends {timeLeft}</span>
-                </div>
-
-                <div className="space-y-2">
-                {event.current_bid >= event.price ? (
-                    <>
-                        <Button className="w-full" size="lg" disabled>
-                        <Gavel className="mr-2 h-5 w-5" />
-                        Place Bid
-                        </Button>
-                        <p className="text-sm text-red-500 mt-2 text-center">
-                        Bidding disabled – Total price reached
-                        </p>
-                    </>
-                    ) : (
-                    <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-                        <DialogTrigger asChild>
-                        <Button className="w-full" size="lg">
-                            <Gavel className="mr-2 h-5 w-5" />
-                            Place Bid
-                        </Button>
-                        </DialogTrigger>
-                        <DialogContent>
-                        <DialogHeader>
-                            <DialogTitle>Place Your Bid</DialogTitle>
-                            <DialogDescription>
-                            Enter your bid amount for &quot;{event?.name}&quot;. The minimum bid is ₹
-                            {(event?.current_bid + 100).toLocaleString()}.
-                            </DialogDescription>
-                        </DialogHeader>
-                        <div className="space-y-4 py-4">
-                            <div className="space-y-2">
-                            <Label htmlFor="bid-amount">Bid Amount (₹)</Label>
-                            <Input
-                                id="bid-amount"
-                                type="number"
-                                min={event?.current_bid + 100}
-                                step={100}
-                                value={bidAmount}
-                                onChange={(e) => setBidAmount(Number(e.target.value))}
-                            />
-                            </div>
-                            <div className="flex items-start gap-2 text-sm text-amber-600 bg-amber-50 p-2 rounded">
-                            <AlertTriangle className="h-4 w-4 mt-0.5 flex-shrink-0" />
-                            <p>
-                                By placing a bid, you agree to book this event if you are the highest bidder when the
-                                bidding ends.
-                            </p>
-                            </div>
-                        </div>
-                        <DialogFooter>
-                            <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                            Cancel
-                            </Button>
-                            <Button onClick={handleBidSubmit} disabled={isSubmitting || bidAmount <= (event.current_bid || 0)}>
-                            {isSubmitting ? "Processing..." : "Confirm Bid"}
-                            </Button>
-                        </DialogFooter>
-                        </DialogContent>
-                    </Dialog>
-                    )}
-
-
-                  {/* <Button variant="outline" className="w-full" onClick={() => setBidAmount(event?.ending_price || 0)} disabled={event.current_bid >= event.price}>
-                    Buy Now at ₹{event?.ending_price?.toLocaleString()}
-                  </Button> */}
+                  <Button variant="default" className="w-full" onClick={()=> handleCheckout(event?.id || '')}>
+                    Proceed to Checkout
+                  </Button> 
                 </div>
 
                 <div className="bg-muted p-3 rounded-md">
@@ -281,42 +117,10 @@ const EventDetail = ({ event, userId, bids }: { event: Event; userId: string; bi
               <p className="text-lg">{event?.description}</p>
             </div>
 
-            <div className="grid gap-4 sm:grid-cols-2">
-              <div className="flex items-center gap-2">
-                <Calendar className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Date</p>
-                  <p className="text-muted-foreground">{event?.date ? format(event.date, "MMMM d, yyyy") : "Date not available"}</p>                
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Clock className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Time</p>
-                  <p className="text-muted-foreground">{event?.time}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <MapPin className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Location</p>
-                  <p className="text-muted-foreground">{event?.location}</p>
-                </div>
-              </div>
-              <div className="flex items-center gap-2">
-                <Users className="h-5 w-5 text-muted-foreground" />
-                <div>
-                  <p className="font-medium">Capacity</p>
-                  <p className="text-muted-foreground">{event?.capacity} attendees</p>
-                </div>
-              </div>
-            </div>
-
             <Tabs defaultValue="details" className="w-full">
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-2">
                 <TabsTrigger value="details">Details</TabsTrigger>
                 <TabsTrigger value="agenda">Agenda</TabsTrigger>
-                <TabsTrigger value="bids">Bid History</TabsTrigger>
               </TabsList>
               <TabsContent value="details" className="pt-4 space-y-4">
                 <p className="text-muted-foreground">{event?.long_description}</p>
@@ -334,42 +138,6 @@ const EventDetail = ({ event, userId, bids }: { event: Event; userId: string; bi
                     <li key={index}>{agenda}</li>
                 ))}
                 </ul>
-              </TabsContent>
-              <TabsContent value="bids" className="pt-4">
-                <Table>
-                  <TableHeader>
-                    <TableRow>
-                      <TableHead>Bidder</TableHead>
-                      <TableHead>Amount</TableHead>
-                      <TableHead>Time</TableHead>
-                      <TableHead>Status</TableHead>
-                    </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                    { bids && Array.isArray(bids) && bids.map((bid) => (
-                      <TableRow key={bid.id}>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-6 w-6">    
-                              <AvatarImage src={`/placeholder.svg?text=₹{bid.userName.charAt(0)}`} />
-                              <AvatarFallback>{bid.userName.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                            <span>{bid.userName}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>₹{bid.amount.toLocaleString()}</TableCell>
-                        <TableCell>{formatDistanceToNow(bid.time, { addSuffix: true })}</TableCell>
-                        <TableCell>
-                          {bid.status === "highest" ? (
-                            <Badge className="bg-green-500 hover:bg-green-600">Highest</Badge>
-                          ) : (
-                            <Badge variant="outline">Outbid</Badge>
-                          )}
-                        </TableCell>
-                      </TableRow>
-                    ))}
-                  </TableBody>
-                </Table>
               </TabsContent>
             </Tabs>
 

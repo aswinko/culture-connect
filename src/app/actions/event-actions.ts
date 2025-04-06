@@ -60,19 +60,10 @@ export async function addEvent({
   description,
   long_description,
   date,
-  time,
-  location,
-  capacity,
-  organizer,
-  starting_price,
-  ending_price,
-  bidding_ends_at,
   features,
   category_id,
   image,
   agendas,
-  current_bid,
-  number_of_bids,
   status = "approved", // Default status
 }: Event ): Promise<EventResponse> {
 
@@ -88,21 +79,12 @@ export async function addEvent({
       description,
       long_description,
       date,
-      time, 
-      capacity,
-      organizer,
-      starting_price,
-      ending_price,
-      bidding_ends_at,
       image: image || null,
       category_id: category_id,
       status,
       created_at: new Date(),
-      location,
       features,
       agendas,
-      current_bid,
-      number_of_bids
     },
   ]);
 

@@ -13,7 +13,6 @@ import {
 import { redirect } from "next/navigation";
 import { getUserRole } from "../actions/auth-actions";
 import { createClient } from "@/utils/supabase/server";
-import { getAllLatestBids } from "../actions/bid-actions";
 
 export default async function DashboardPage() {
   // This is a demo dashboard that shows different content based on user role
@@ -32,9 +31,7 @@ export default async function DashboardPage() {
     redirect("/"); // 🔹 Redirect to unauthorized page
   }
 
-  const { bids } = await getAllLatestBids();
 
-  if (!bids) return <div>No Bids!</div>;
   
   return (
     <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">

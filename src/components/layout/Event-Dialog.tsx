@@ -26,17 +26,10 @@ const eventSchema = z.object({
   price: z.string().min(1, "Price is required.").regex(/^\d+$/, "Price must be a valid number."),
   description: z.string().min(10, "Description must be at least 10 characters long."),
   long_description: z.string().min(10, "Long description must be at least 10 characters long."),
-  location: z.string().min(3, "Location must be specified."),
   features: z.array(z.string().min(2, "Each feature must have at least 2 characters.")).min(1, "At least one feature is required."),
   agendas: z.array(z.string().min(2, "Each agenda must have at least 2 characters.")).min(1, "At least one agenda is required."),
   categoryId: z.string().min(1, "Please select a category."),
   date: z.string().min(1, "Date is required."),
-  time: z.string().min(1, "Time is required."),
-  capacity: z.string().regex(/^\d+$/, "Capacity must be a number."),
-  organizer: z.string().min(2, "Organizer name is required."),
-  starting_price: z.string().regex(/^\d+(\.\d{1,2})?$/, "Starting price must be a number."),
-  ending_price: z.string().regex(/^\d+(\.\d{1,2})?$/, "Ending price must be a number."),
-  bidding_ends_at: z.string().min(1, "Bidding end time is required."),
   image: z.any().refine((files) => files?.[0] instanceof File, "Please select a valid file."),
 });
 
@@ -144,20 +137,11 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
       price: parseFloat(data.price),
       description: data.description,
       long_description: data.long_description,
-      date: new Date(data.date), // Convert string to Date
-      time: data.time,
-      location: data.location,
-      capacity: parseInt(data.capacity),
-      organizer: data.organizer,
-      starting_price: parseFloat(data.starting_price),
-      ending_price: parseFloat(data.ending_price),
-      bidding_ends_at: new Date(data.bidding_ends_at), // Convert string to Date
+      date: new Date(data.date),
       features,
       agendas,
       category_id: data.categoryId,
       image: imageUrl || "",
-      current_bid: 0, // Added missing property
-      number_of_bids: 0, // Added missing property
     });
     
 
@@ -187,13 +171,6 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
             <Label>Name</Label>
             <Input type="text" {...register("name")} />
             {errors.name && <p className="text-red-500 text-sm">{errors.name.message}</p>}
-          </div>
-
-          {/* Event Location */}
-          <div className="mb-4">
-            <Label>Location</Label>
-            <Input type="text" {...register("location")} />
-            {errors.location && <p className="text-red-500 text-sm">{errors.location.message}</p>}
           </div>
 
           {/* Event Price */}
@@ -295,48 +272,6 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
             <Label>Date</Label>
             <Input type="date" {...register("date")} />
             {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
-          </div>
-
-          {/* Time */}
-          <div className="mb-4">
-            <Label>Time</Label>
-            <Input type="time" {...register("time")} />
-            {errors.time && <p className="text-red-500 text-sm">{errors.time.message}</p>}
-          </div>
-
-          {/* Capacity */}
-          <div className="mb-4">
-            <Label>Capacity</Label>
-            <Input type="number" {...register("capacity")} />
-            {errors.capacity && <p className="text-red-500 text-sm">{errors.capacity.message}</p>}
-          </div>
-
-          {/* Organizer */}
-          <div className="mb-4">
-            <Label>Organizer</Label>
-            <Input type="text" {...register("organizer")} />
-            {errors.organizer && <p className="text-red-500 text-sm">{errors.organizer.message}</p>}
-          </div>
-
-          {/* Starting Price */}
-          <div className="mb-4">
-            <Label>Starting Price</Label>
-            <Input type="number" step="0.01" {...register("starting_price")} />
-            {errors.starting_price && <p className="text-red-500 text-sm">{errors.starting_price.message}</p>}
-          </div>
-
-          {/* Ending Price */}
-          <div className="mb-4">
-            <Label>Ending Price</Label>
-            <Input type="number" step="0.01" {...register("ending_price")} />
-            {errors.ending_price && <p className="text-red-500 text-sm">{errors.ending_price.message}</p>}
-          </div>
-
-          {/* Bidding Ends At */}
-          <div className="mb-4">
-            <Label>Bidding Ends At</Label>
-            <Input type="datetime-local" {...register("bidding_ends_at")} />
-            {errors.bidding_ends_at && <p className="text-red-500 text-sm">{errors.bidding_ends_at.message}</p>}
           </div>
 
 

@@ -45,10 +45,16 @@ export function ProfileDropdown() {
             <DropdownMenuShortcut>⌘E</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
-            <Link href="/my-bids">
-              My Bids    
+            <Link href="/my-bookings">
+              My Bookings  
             </Link>
             <DropdownMenuShortcut>⌘B</DropdownMenuShortcut>
+          </DropdownMenuItem>
+          <DropdownMenuItem>
+            <Link href="/dashboard">
+              View Orders  
+            </Link>
+            <DropdownMenuShortcut>⌘O</DropdownMenuShortcut>
           </DropdownMenuItem>
           <DropdownMenuItem>
             Settings

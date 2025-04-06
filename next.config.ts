@@ -9,7 +9,12 @@ const nextConfig: NextConfig = {
         hostname: "uwvmzebvletcogpgnrsh.supabase.co",
       }
     ]
-  }
+  },
+  experimental: {
+    serverActions: {
+      bodySizeLimit: "2mb"
+    },
+  },
 };
 
 export default nextConfig;
