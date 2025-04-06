@@ -14,7 +14,7 @@ import { Progress } from "@/components/ui/progress"
 import { format, formatDistanceToNow } from "date-fns"
 import { Event } from "@/types/Event"
 
-export default function AllEventsClient({events, categories}: {events: Event[]; categories: { id: string; name: string; }[]}) {
+export default function EventClient({events, categories}: {events: Event[]; categories: { id: string; name: string; }[]}) {
   const [searchQuery, setSearchQuery] = useState("")
   const [activeCategory, setActiveCategory] = useState("all")
   const [sortBy, setSortBy] = useState("endingSoon")
@@ -56,8 +56,8 @@ export default function AllEventsClient({events, categories}: {events: Event[]; 
       <div className="container mx-auto px-4 py-8">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-8">
           <div>
-            <h1 className="text-3xl font-bold">Event Bidding</h1>
-            <p className="text-muted-foreground">Bid on premium venues and event spaces</p>
+            <h1 className="text-3xl font-bold">Events</h1>
+            <p className="text-muted-foreground">premium events and event spaces</p>
           </div>
           <div className="flex w-full md:w-auto gap-2">
             <div className="relative w-full md:w-80">
@@ -101,8 +101,8 @@ export default function AllEventsClient({events, categories}: {events: Event[]; 
         </Tabs>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {Array.isArray(sortedEvents) && sortedEvents.length > 0 && (sortedEvents.map((event: Event) => (
-            <Link key={event.id} href={`/event/${event.id}`}>
-                <Card className="h-full overflow-hidden transition-all hover:shadow-md">
+            // <Link key={event.id} href={`/event/${event.id}`}>
+                <Card className="h-full overflow-hidden transition-all hover:shadow-md" key={event.id}>
                   <div className="relative aspect-video">
                     <Image
                     src={event.image || "/placeholder.svg"}
@@ -110,7 +110,6 @@ export default function AllEventsClient({events, categories}: {events: Event[]; 
                     fill
                     className="object-cover transition-transform hover:scale-105"
                   />
-                  <Badge className="absolute top-2 right-2 bg-primary/80 hover:bg-primary">Bidding</Badge>
                 </div>
                 <CardContent className="p-4">
                   <div className="flex justify-between items-start">
@@ -119,17 +118,10 @@ export default function AllEventsClient({events, categories}: {events: Event[]; 
                   </div>
                   <p className="text-sm text-muted-foreground mt-1 line-clamp-2">{event.description}</p>
 
-                  <div className="flex items-center gap-2 mt-2 text-sm">
+                  {/* <div className="flex items-center gap-2 mt-2 text-sm">
                     <Calendar className="h-4 w-4 text-muted-foreground" />
                     <span>{event.date ? format(event.date, "MMMM d, yyyy") : "Date not available"}</span>
-                  </div>
-
-                  <div className="flex items-center gap-2 mt-1 text-sm">
-                    <Timer className="h-4 w-4 text-amber-500" />
-                    <span className="text-xs">
-                      Ends {formatDistanceToNow(event.bidding_ends_at, { addSuffix: true })}
-                    </span>
-                  </div>
+                  </div> */}
 
                   <div className="mt-3">
                     <div className="flex justify-between items-center">
@@ -156,7 +148,7 @@ export default function AllEventsClient({events, categories}: {events: Event[]; 
                   </div>
                 </CardContent>
               </Card>
-            </Link>            
+            // </Link>            
         )))}
         </div>
 

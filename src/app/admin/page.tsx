@@ -1,11 +1,19 @@
-import { ArrowRight, Package, ShoppingBasket, Truck } from "lucide-react"
-import Link from "next/link"
+import { ArrowRight, Package, ShoppingBasket, Truck } from "lucide-react";
+import Link from "next/link";
 
-import { Button } from "@/components/ui/button"
-import { Card, CardContent, CardDescription, CardFooter, CardHeader, CardTitle } from "@/components/ui/card"
-import { redirect } from "next/navigation"
-import { getUserRole } from "../actions/auth-actions"
-import { createClient } from "@/utils/supabase/server"
+import { Button } from "@/components/ui/button";
+import {
+  Card,
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "@/components/ui/card";
+import { redirect } from "next/navigation";
+import { getUserRole } from "../actions/auth-actions";
+import { createClient } from "@/utils/supabase/server";
+import { getAllLatestBids } from "../actions/bid-actions";
 
 export default async function DashboardPage() {
   // This is a demo dashboard that shows different content based on user role
@@ -19,11 +27,15 @@ export default async function DashboardPage() {
     redirect("/");
   }
 
-    // 🔹 Redirect if the user is not a farmer
-    if (userRole != "admin") {
-      redirect("/"); // 🔹 Redirect to unauthorized page
-    }
+  // 🔹 Redirect if the user is not a farmer
+  if (userRole != "admin") {
+    redirect("/"); // 🔹 Redirect to unauthorized page
+  }
 
+  const { bids } = await getAllLatestBids();
+
+  if (!bids) return <div>No Bids!</div>;
+  
   return (
     <div className="flex flex-col gap-4 p-4 md:gap-8 md:p-8">
       <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-4">
@@ -39,7 +51,9 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Active Subscriptions</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Active Users
+            </CardTitle>
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
@@ -49,12 +63,16 @@ export default async function DashboardPage() {
         </Card>
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Upcoming Deliveries</CardTitle>
+            <CardTitle className="text-sm font-medium">
+              Upcoming Events
+            </CardTitle>
             <Truck className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">5</div>
-            <p className="text-xs text-muted-foreground">Next delivery: Today</p>
+            <p className="text-xs text-muted-foreground">
+              Next Event: Today
+            </p>
           </CardContent>
         </Card>
         <Card>
@@ -74,8 +92,10 @@ export default async function DashboardPage() {
             </svg>
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">$249.45</div>
-            <p className="text-xs text-muted-foreground">+$24.20 from last month</p>
+            <div className="text-2xl font-bold">₹2490.45</div>
+            <p className="text-xs text-muted-foreground">
+              +₹2200.20 from last month
+            </p>
           </CardContent>
         </Card>
       </div>
@@ -83,64 +103,43 @@ export default async function DashboardPage() {
         <Card className="lg:col-span-4">
           <CardHeader>
             <CardTitle>Recent Orders</CardTitle>
-            <CardDescription>You have 3 orders scheduled for delivery this week.</CardDescription>
+            <CardDescription>
+              You have 3 orders scheduled for delivery this week.
+            </CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="grid grid-cols-4 gap-4 rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Order #1234</p>
-                  <p className="text-sm text-muted-foreground">March 14, 2023</p>
+              {bids?.map((bid, index: number) => (
+                <div
+                  className="grid grid-cols-4 gap-4 rounded-lg border p-4"
+                  key={index}
+                >
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Event Name</p>
+                    <p className="text-sm text-muted-foreground">
+                      {bid.event.name}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Status</p>
+                    <p className="text-sm text-muted-foreground">
+                      {bid.status}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Time</p>
+                    <p className="text-sm text-muted-foreground">
+                      {bid.time.toLocaleString()}
+                    </p>
+                  </div>
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Total</p>
+                    <p className="text-sm text-muted-foreground">
+                      ₹{bid.amount}
+                    </p>
+                  </div>
                 </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Status</p>
-                  <p className="text-sm text-muted-foreground">Processing</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Items</p>
-                  <p className="text-sm text-muted-foreground">5 items</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Total</p>
-                  <p className="text-sm text-muted-foreground">$45.00</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 gap-4 rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Order #1233</p>
-                  <p className="text-sm text-muted-foreground">March 12, 2023</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Status</p>
-                  <p className="text-sm text-muted-foreground">Delivered</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Items</p>
-                  <p className="text-sm text-muted-foreground">3 items</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Total</p>
-                  <p className="text-sm text-muted-foreground">$27.50</p>
-                </div>
-              </div>
-              <div className="grid grid-cols-4 gap-4 rounded-lg border p-4">
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Order #1232</p>
-                  <p className="text-sm text-muted-foreground">March 10, 2023</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Status</p>
-                  <p className="text-sm text-muted-foreground">Delivered</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Items</p>
-                  <p className="text-sm text-muted-foreground">7 items</p>
-                </div>
-                <div className="space-y-1">
-                  <p className="text-sm font-medium">Total</p>
-                  <p className="text-sm text-muted-foreground">$52.25</p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
           <CardFooter>
@@ -154,53 +153,41 @@ export default async function DashboardPage() {
         </Card>
         <Card className="lg:col-span-3">
           <CardHeader>
-            <CardTitle>Active Subscriptions</CardTitle>
-            <CardDescription>Your recurring deliveries</CardDescription>
+            <CardTitle>Latest Events</CardTitle>
+            <CardDescription>Your recurring events</CardDescription>
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              <div className="rounded-lg border p-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">Daily Milk Delivery</p>
-                    <p className="text-sm text-green-600 font-medium">Active</p>
+              {bids?.map((bid, index: number) => (
+                <div className="rounded-lg border p-4" key={index}>
+                  <div className="space-y-2">
+                    <div className="flex items-center justify-between">
+                      <p className="text-sm font-medium">{bid.event.name}</p>
+                      <p className="text-sm text-green-600 font-medium">
+                        {bid.event.status}
+                      </p>
+                    </div>
+                    <p className="text-sm text-muted-foreground">
+                      Highest Current Bid : ₹ {bid.event.currentHighestBid}
+                    </p>
+                      {/* <p className="text-sm text-muted-foreground">
+                        {bid.}
+                      </p> */}
                   </div>
-                  <p className="text-sm text-muted-foreground">2 liters, every day except Sunday</p>
-                  <p className="text-sm text-muted-foreground">Next delivery: Tomorrow, 7:00 AM</p>
                 </div>
-              </div>
-              <div className="rounded-lg border p-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">Weekly Vegetable Box</p>
-                    <p className="text-sm text-green-600 font-medium">Active</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Mixed seasonal vegetables, every Monday</p>
-                  <p className="text-sm text-muted-foreground">Next delivery: March 20, 2023</p>
-                </div>
-              </div>
-              <div className="rounded-lg border p-4">
-                <div className="space-y-2">
-                  <div className="flex items-center justify-between">
-                    <p className="text-sm font-medium">Monthly Pantry Essentials</p>
-                    <p className="text-sm text-green-600 font-medium">Active</p>
-                  </div>
-                  <p className="text-sm text-muted-foreground">Rice, flour, oil, and spices, first of every month</p>
-                  <p className="text-sm text-muted-foreground">Next delivery: April 1, 2023</p>
-                </div>
-              </div>
+              ))}
             </div>
           </CardContent>
-          <CardFooter>
+          {/* <CardFooter>
             <Button asChild variant="outline" className="w-full">
               <Link href="/dashboard/subscriptions">
                 Manage subscriptions
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
       </div>
     </div>
-  )
+  );
 }
