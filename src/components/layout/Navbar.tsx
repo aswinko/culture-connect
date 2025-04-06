@@ -3,20 +3,21 @@ import { Button } from "@/components/ui/button"
 // import { Input } from "@/components/ui/input"
 import { Sheet, SheetTrigger, SheetContent } from "@/components/ui/sheet"
 import { ToggleTheme } from "./toggle-theme"
-// import { createClient } from "@/utils/supabase/server"
-// import { ProfileDropdown } from "./Profile-Dropdown"
-import AuthStatus from "../Authentication/AuthStatus"
-export default function Navbar() {
-  // const supabase = await createClient()
+import { createClient } from "@/utils/supabase/server"
+import { ProfileDropdown } from "./Profile-Dropdown"
+// import AuthStatus from "../Authentication/AuthStatus"
+import { Music } from "lucide-react"
+export default async function Navbar() {
+  const supabase = await createClient()
   // const { data } = await supabase.auth.getUser(); // ✅ Fetch user on the server
 
-  // const { data } = await supabase.auth.getUser()
+  const { data } = await supabase.auth.getUser()
 
   return (
     <header className="sticky top-0 z-50 w-full border-b bg-white dark:border-gray-800 dark:bg-gray-950">
       <div className="container mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
         <Link href="/" className="flex items-center gap-2" prefetch={false}>
-          <MountainIcon className="h-6 w-6" />
+          <Music className="h-6 w-6 text-primary" />
           <span className="sr-only">Culture Connect</span>
         </Link>
         {/* <nav className="hidden items-center gap-6 text-sm font-medium md:flex">
@@ -26,12 +27,46 @@ export default function Navbar() {
           </div>
         </nav> */}
         <div className="flex items-center gap-4">
+
+          <div className="hidden md:flex gap-6">
+          <Link
+                  href="/"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  prefetch={false}
+                >
+                  Home
+                </Link>
+                <Link
+                  href="/all-events"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  prefetch={false}
+                >
+                  Events
+                </Link>
+                <Link
+                  href="/about-us"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  prefetch={false}
+                >
+                  About
+                </Link>
+                <Link
+                  href="/services"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  prefetch={false}
+                >
+                  Services
+                </Link>
+          </div>
+        
           <div aria-label="Toggle dark mode" className="rounded-full">
+            
             {/* <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" /> */}
             <ToggleTheme />
           </div>
-          <AuthStatus />
-          {/* {data?.user ? (
+          {/* <AuthStatus /> */}
+          
+          {data?.user ? (
             <ProfileDropdown />
           ) : (<Link
             href="/login"
@@ -39,7 +74,7 @@ export default function Navbar() {
             prefetch={false}
           >
             Login
-          </Link>)} */}
+          </Link>)}
           <Sheet>
             <SheetTrigger asChild>
               <Button variant="ghost" size="icon" className="rounded-full md:hidden">
@@ -57,21 +92,28 @@ export default function Navbar() {
                   Home
                 </Link>
                 <Link
-                  href="#"
+                  href="/all-events"
+                  className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
+                  prefetch={false}
+                >
+                  Events
+                </Link>
+                <Link
+                  href="/about-us"
                   className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   prefetch={false}
                 >
                   About
                 </Link>
                 <Link
-                  href="#"
+                  href="/services"
                   className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   prefetch={false}
                 >
                   Services
                 </Link>
                 <Link
-                  href="#"
+                  href="/contact-us"
                   className="text-sm font-medium text-gray-500 hover:text-gray-900 dark:text-gray-400 dark:hover:text-gray-50"
                   prefetch={false}
                 >
@@ -127,24 +169,24 @@ function MenuIcon(props: React.SVGProps<SVGSVGElement>) {
 // }
 
 
-function MountainIcon(props : React.SVGProps<SVGSVGElement>) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
-    </svg>
-  )
-}
+// function MountainIcon(props : React.SVGProps<SVGSVGElement>) {
+//   return (
+//     <svg
+//       {...props}
+//       xmlns="http://www.w3.org/2000/svg"
+//       width="24"
+//       height="24"
+//       viewBox="0 0 24 24"
+//       fill="none"
+//       stroke="currentColor"
+//       strokeWidth="2"
+//       strokeLinecap="round"
+//       strokeLinejoin="round"
+//     >
+//       <path d="m8 3 4 8 5-5 5 15H2L8 3z" />
+//     </svg>
+//   )
+// }
 
 
 // function PhoneIcon(props : React.SVGProps<SVGSVGElement>) {

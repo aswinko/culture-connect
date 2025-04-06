@@ -18,3 +18,12 @@ create table events (
   status text not null default 'pending' check (status in ('pending', 'approved', 'rejected')),
   created_at timestamp default now() not null
 );
+
+
+CREATE TABLE public.bids (
+  id uuid DEFAULT gen_random_uuid() PRIMARY KEY,
+  event_id uuid REFERENCES public.events(id) ON DELETE CASCADE,
+  user_id uuid REFERENCES auth.users(id) ON DELETE CASCADE,
+  bid_amount numeric(10, 2) NOT NULL,
+  created_at timestamp DEFAULT now()
+);

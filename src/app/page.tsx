@@ -3,7 +3,7 @@
 import { ImageCarousel } from "@/components/layout/Image-Carousel";
 import Navbar from "@/components/layout/Navbar";
 import Link from "next/link";
-import { getAllCategories, getAllEvents } from "./actions/event-actions";
+import { getAllCategories, getAllEvents, getAllEventsExceptCurrentUser } from "./actions/event-actions";
 import { Button } from "@/components/ui/button";
 import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from "@/components/ui/carousel";
 import { Card } from "@/components/ui/card";
@@ -12,11 +12,19 @@ import { Badge } from "@/components/ui/badge";
 import { Input } from "@/components/ui/input";
 import Footer from "@/components/layout/Footer";
 import EventCarouselItem from "@/components/layout/event-carousel-item";
+import { createClient } from "@/utils/supabase/server";
 
 export default async function Home() {
 
-  const events = await getAllEvents();
-  const categories = await getAllCategories();
+    const supabase = await createClient()
+    const { data } = await supabase.auth.getUser();
+    const events = data.user ? await getAllEventsExceptCurrentUser(data.user.id) : await getAllEvents();
+    const categories = await getAllCategories();
+
+    const getCategoryName = (categoryId: string) => {
+      const category = categories.find(cat => cat.id === categoryId);
+      return category ? category.name : "Unknown";
+    }
 
   if (!events) {
     return (
@@ -59,11 +67,14 @@ export default async function Home() {
               <div className="mx-auto max-w-5xl py-12">
                 <Carousel opts={{ align: "start" }}>
                   <CarouselContent className="-ml-4">
-                  {events.map((event: { id: string; name: string; description: string; image: string; price: number, category_id: string; }, index: number) => (
-                                  <Link href={`/event/${event.id}`} className="hover:scale-[102%] transition-transform duration-300" key={index}>
+                    {events.map((event: { id: string; name: string; description: string; image: string; price: number, category_id: string; }, index: number) => (
+                          <CarouselItem className="basis-1/1 md:basis-1/2 lg:basis-1/4" key={index}>
 
-                      <EventCarouselItem name={event.name} description={event.description} image={event.image} key={index} price={event.price} category={event.category_id} />
+                      <Link href={`/event/${event.id}`} className="hover:scale-[102%] transition-transform duration-300">
+
+                        <EventCarouselItem name={event.name} description={event.description.length > 100 ? event.description.slice(0, event.description.slice(0, 150).lastIndexOf(" ")) + "...": event.description} image={event.image} price={event.price} category={getCategoryName(event.category_id)} />
                       </Link>
+                      </CarouselItem>
                     ))}
                   </CarouselContent>
                   <div className="flex justify-end gap-2 mt-4">
@@ -74,9 +85,11 @@ export default async function Home() {
               </div>
 
               <div className="flex justify-center">
-                <Button variant="outline" className="gap-1">
-                  View All Concerts <ArrowRight className="h-4 w-4" />
-                </Button>
+                <Link href={"/all-events"}>
+                  <Button variant="outline" className="gap-1">
+                    View All Concerts <ArrowRight className="h-4 w-4" />
+                  </Button>
+                </Link>
               </div>
             </div>
           </section>
@@ -93,7 +106,7 @@ export default async function Home() {
               </div>
             </div>
             <div className="mx-auto grid max-w-5xl grid-cols-2 gap-6 py-12 md:grid-cols-3 lg:grid-cols-4">
-              {categories.map((category: {name: string;}, i) => (
+              {categories.map((category: {name: string;}, i: number) => (
                 <Card
                   key={i}
                   className="flex flex-col items-center justify-center p-6 text-center hover:bg-accent transition-colors cursor-pointer"

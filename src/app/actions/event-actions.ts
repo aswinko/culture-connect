@@ -48,7 +48,7 @@ export async function uploadEventImage(file: File): Promise<UploadResponse> {
   
     const imageUrl = urlData.publicUrl;
   
-    console.log("Image URL:", imageUrl);
+    // console.log("Image URL:", imageUrl);
   
     return { success: true, error: null, imageUrl };
 }
@@ -58,8 +58,21 @@ export async function addEvent({
   name,
   price,
   description,
-  image,
+  long_description,
+  date,
+  time,
+  location,
+  capacity,
+  organizer,
+  starting_price,
+  ending_price,
+  bidding_ends_at,
+  features,
   category_id,
+  image,
+  agendas,
+  current_bid,
+  number_of_bids,
   status = "approved", // Default status
 }: Event ): Promise<EventResponse> {
 
@@ -73,10 +86,23 @@ export async function addEvent({
       name: name,
       price,
       description,
+      long_description,
+      date,
+      time, 
+      capacity,
+      organizer,
+      starting_price,
+      ending_price,
+      bidding_ends_at,
       image: image || null,
       category_id: category_id,
       status,
       created_at: new Date(),
+      location,
+      features,
+      agendas,
+      current_bid,
+      number_of_bids
     },
   ]);
 
@@ -93,7 +119,7 @@ export async function getAllEvents() {
   
     const { data, error } = await supabase
       .from("events") // ✅ Ensure the correct table name
-      .select("id, user_id, name, price, description, category_id, image, created_at") // ✅ Fetch only required fields
+      .select("*") // ✅ Fetch only required fields
       .order("created_at", { ascending: false }); // ✅ Sort by latest products first
   
     if (error) {
@@ -102,6 +128,23 @@ export async function getAllEvents() {
     }
   
     return data;
+}
+
+export async function getAllEventsExceptCurrentUser(userId: string) {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("events")
+    .select("*")
+    .neq("user_id", userId) // ✅ Exclude current user's events
+    .order("created_at", { ascending: false });
+
+  if (error) {
+    console.error("Error fetching events:", error.message);
+    return [];
+  }
+
+  return data;
 }
   
 
@@ -164,15 +207,17 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
 
   export async function getEventById(eventId: string): Promise<Event | null> {
     const supabase = await createClient();
+    console.log("fvfv",eventId);
+    
   
     const { data, error } = await supabase
       .from("events")
-      .select("id, name, price, image, description, category_id")
+      .select("*")
       .eq("id", eventId)
       .single();
   
     if (error) {
-      console.error("Error fetching product:", error.message);
+      console.error("Error fetching event:", error.message);
       return null;
     }
   
@@ -192,7 +237,7 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
     // Fetch events where user_id matches the current user
     const { data, error } = await supabase
       .from("events")
-      .select("id, user_id, name, price, description, category_id, image, created_at")
+      .select("id, user_id, name, price, description, category_id, image, location, features, created_at")
       .eq("user_id", user.user.id)
       .order("created_at", { ascending: false });
   
@@ -202,3 +247,27 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
   
     return data;
   }
+
+  export async function getRelatedEvent(id: string) {
+    const supabase = await createClient();
+  
+    // Fetch the event
+    const { data: event, error } = await supabase
+      .from("events")
+      .select("*")
+      .eq("id", id)
+      .single();
+  
+    if (error || !event) return null;
+  
+    // Fetch related events (same category, exclude current event)
+    const { data: relatedEvents } = await supabase
+      .from("events")
+      .select("id, name, price, image")
+      .eq("category_id", event.category_id)
+      .neq("id", id) // Exclude current event
+      .limit(4); // Get only 4 related events
+  
+    return { ...event, relatedEvents: relatedEvents || [] };
+  }
+  

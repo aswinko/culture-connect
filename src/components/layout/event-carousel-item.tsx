@@ -1,5 +1,5 @@
 import React from 'react'
-import { CarouselItem } from "@/components/ui/carousel";
+// import { CarouselItem } from "@/components/ui/carousel";
 import { Card, CardContent } from '../ui/card';
 import Image from 'next/image';
 import { Badge } from '../ui/badge';
@@ -11,13 +11,12 @@ interface CarouselProps {
     name: string;
     price: number;
     image: string;
-    key: number;
     description: string;
 }
 
-const EventCarouselItem = ({category, name, price, image, description, key}: CarouselProps ) => {
+const EventCarouselItem = ({category, name, price, image, description}: CarouselProps ) => {
   return (
-    <CarouselItem key={key} className="pl-4 md:basis-1/2 lg:basis-1/3">
+    // <CarouselItem className="pl-4 ">
                         <Card className="overflow-hidden h-full">
                           <div className="relative">
                             <Image
@@ -46,17 +45,18 @@ const EventCarouselItem = ({category, name, price, image, description, key}: Car
                                 <MapPin className="h-4 w-4 mr-1" />
                                 {concert.location}
                               </div> */}
-                              <div className="flex items-center text-sm text-muted-foreground">
+                              <div className="flex items-center text-sm text-muted-foreground line-clamp-4">
                                 {description}
                               </div>
+
                               <div className="flex justify-between items-center pt-2">
                                 <p className="font-bold">From {price}</p>
-                                <Button size="sm">Book Now</Button>
+                                <Button size="sm">Bid Now</Button>
                               </div>
                             </div>
                           </CardContent>
                         </Card>
-                      </CarouselItem>
+                      // </CarouselItem>
   )
 }
 

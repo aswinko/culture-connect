@@ -17,7 +17,7 @@ const MyEvents = async () => {
 
     const events = await getUserEvents();
 
-    if (events <= 0) {
+    if (!Array.isArray(events) || events.length === 0) {
       return (
         <>
           <Navbar />
@@ -41,9 +41,9 @@ const MyEvents = async () => {
         <main className="flex-1">
           <section className="container mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {events?.map((event: { id: string; name: string; description: string; image: string; price: number }, index: number) => (
-              <Link href={`/event/${event.id}`} className="hover:scale-[102%] transition-transform duration-300" key={index}>
+              <div className="hover:scale-[102%] transition-transform duration-300" key={index}>
                 <EventCard title={event.name} description={event.description} imageUrl={event.image} price={event.price} />
-              </Link>
+              </div>
             ))}
           </section>
         </main>

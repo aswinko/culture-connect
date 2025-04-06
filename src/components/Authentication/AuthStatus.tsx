@@ -5,6 +5,8 @@ import { createClient } from "@/utils/supabase/client";
 import { ProfileDropdown } from "@/components/layout/Profile-Dropdown";
 import Link from "next/link";
 import { User } from "@/types/User";
+import { Button } from "../ui/button";
+import { ChevronRight } from "lucide-react";
 
 export default function AuthStatus() {
   const supabase = createClient();
@@ -19,7 +21,12 @@ export default function AuthStatus() {
   }, [supabase.auth]);
 
   return user ? (
-    <ProfileDropdown />
+    <>
+      <ProfileDropdown />
+      <Link href={"/all-events"}>
+        <Button variant={"outline"} className=" flex items-center justify-center">Browse Events <ChevronRight className="w-6 h-6" /></Button>
+      </Link>
+    </>
   ) : (
     <Link
       href="/login"

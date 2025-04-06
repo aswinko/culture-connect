@@ -1,6 +1,6 @@
 import type React from "react"
 import Link from "next/link"
-import { Bell, ChevronDown, Leaf, LogOut, Menu, Settings, ShoppingCart, User } from "lucide-react"
+import { Bell, ChevronDown, LogOut, Menu, Music, Settings, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -47,25 +47,25 @@ export default async function DashboardLayout({ children }: { children: React.Re
             <SheetContent side="left" className="w-72">
               <nav className="grid gap-6 text-lg font-medium">
                 <Link href="/" className="flex items-center gap-2 text-lg font-semibold">
-                  <Leaf className="h-6 w-6 text-green-600" />
-                  <span>PureFarm Market</span>
+                  <Music className="h-6 w-6 text-black" />
+                  <span>CultureConnect</span>
                 </Link>
                 <DashboardNav userRole={role || ''} />
               </nav>
             </SheetContent>
           </Sheet>
           <Link href="/" className="flex items-center gap-2 text-lg font-semibold md:text-base">
-            <Leaf className="h-6 w-6 text-green-600" />
-            <span>PureFarm Market</span>
-          </Link>
+          <Music className="h-6 w-6 text-black" />
+          <span>CultureConnect</span>
+          </Link> 
           <div className="ml-auto flex items-center gap-2">
             {/* {user.role === "customer" && ( */}
-              <Link href="/dashboard/cart">
+              {/* <Link href="/dashboard/cart">
                 <Button variant="outline" size="icon">
                   <ShoppingCart className="h-5 w-5" />
                   <span className="sr-only">View cart</span>
                 </Button>
-              </Link>
+              </Link> */}
             {/* )} */}
             <Button variant="outline" size="icon">
               <Bell className="h-5 w-5" />
