@@ -13,6 +13,8 @@ import {
 import { redirect } from "next/navigation";
 import { getUserRole } from "../actions/auth-actions";
 import { createClient } from "@/utils/supabase/server";
+import { getAllPayments } from "../actions/payment-actions";
+import { getAllEvents } from "../actions/event-actions";
 
 export default async function DashboardPage() {
   // This is a demo dashboard that shows different content based on user role
@@ -30,6 +32,8 @@ export default async function DashboardPage() {
   if (userRole != "admin") {
     redirect("/"); // 🔹 Redirect to unauthorized page
   }
+  const payments = await getAllPayments()
+  const events = await getAllEvents() 
 
 
   
@@ -106,33 +110,33 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {bids?.map((bid, index: number) => (
+              {payments?.map((payment, index: number) => (
                 <div
                   className="grid grid-cols-4 gap-4 rounded-lg border p-4"
                   key={index}
                 >
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Event Name</p>
+                  {/* <div className="space-y-1">
+                    <p className="text-sm font-medium">Payment Id</p>
                     <p className="text-sm text-muted-foreground">
-                      {bid.event.name}
+                      {payment.id}
+                    </p>
+                  </div> */}
+                  <div className="space-y-1">
+                    <p className="text-sm font-medium">Order Id</p>
+                    <p className="text-sm text-muted-foreground">
+                      {payment.order_id}
                     </p>
                   </div>
                   <div className="space-y-1">
                     <p className="text-sm font-medium">Status</p>
                     <p className="text-sm text-muted-foreground">
-                      {bid.status}
+                      {payment.status}
                     </p>
                   </div>
                   <div className="space-y-1">
-                    <p className="text-sm font-medium">Time</p>
+                    <p className="text-sm font-medium">Created at</p>
                     <p className="text-sm text-muted-foreground">
-                      {bid.time.toLocaleString()}
-                    </p>
-                  </div>
-                  <div className="space-y-1">
-                    <p className="text-sm font-medium">Total</p>
-                    <p className="text-sm text-muted-foreground">
-                      ₹{bid.amount}
+                      {payment.created_at.toLocaleString()}
                     </p>
                   </div>
                 </div>
@@ -155,17 +159,17 @@ export default async function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="space-y-4">
-              {bids?.map((bid, index: number) => (
+              {events?.slice(0, 4).map((event, index: number) => (
                 <div className="rounded-lg border p-4" key={index}>
                   <div className="space-y-2">
                     <div className="flex items-center justify-between">
-                      <p className="text-sm font-medium">{bid.event.name}</p>
+                      <p className="text-sm font-medium">{event?.name}</p>
                       <p className="text-sm text-green-600 font-medium">
-                        {bid.event.status}
+                        {event?.status}
                       </p>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Highest Current Bid : ₹ {bid.event.currentHighestBid}
+                      Price : ₹ {event?.price}
                     </p>
                       {/* <p className="text-sm text-muted-foreground">
                         {bid.}

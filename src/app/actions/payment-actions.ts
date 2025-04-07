@@ -30,3 +30,19 @@ export async function createPayment(payment: Payment) {
 
   return { data, error: bookingError };
 }
+
+export async function getAllPayments() {
+  const supabase = await createClient();
+
+  const { data, error } = await supabase
+    .from("payments")
+    .select("*")
+    .order("created_at", { ascending: false });
+
+    if (error) {
+      console.error("Error fetching events:", error.message);
+      return [];
+    }
+  
+    return data;
+}

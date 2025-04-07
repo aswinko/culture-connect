@@ -34,8 +34,7 @@ export default function EventClient({
     events.filter((event: Event) => {
       const matchesSearch =
         event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchQuery.toLowerCase());
+        event.description.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesCategory =
         activeCategory === "all" || event.category_id === activeCategory;
       return matchesSearch && matchesCategory;
@@ -148,7 +147,7 @@ export default function EventClient({
                   <div className="mt-3">
                     <div className="flex justify-between items-center">
                       <p className="text-sm font-bold">
-                        V{event.price.toLocaleString()}
+                      ₹ {event.price.toLocaleString()}
                       </p>
                     </div>
                   </div>
