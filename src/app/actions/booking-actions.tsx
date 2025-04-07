@@ -1,6 +1,63 @@
-"use server";
+"use server"
 
-import { createClient } from "@/utils/supabase/server";
+import { createClient } from "@/utils/supabase/server"
+
+export async function createBooking({
+  name,
+  address,
+  location,
+  date,
+  negotiatedAmount,
+  eventId,
+  userId,
+}: {
+  name: string
+  address: string
+  location: string
+  date: string
+  negotiatedAmount: number
+  eventId: string
+  userId: string
+}) {
+  const supabase = await createClient()
+
+
+  const { error } = await supabase.from("booking").insert({
+    name,
+    address,
+    location,
+    date,
+    negotiated_amount: negotiatedAmount,
+    event_id: eventId,
+    user_id: userId,
+    status: "pending",
+  })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+
+  return { success: true }
+}
+
+
+export async function getBookingsByCurrentUser(userId: string) {
+  const supabase = await createClient()
+  const { data, error } = await supabase
+    .from("booking")
+    .select(
+      `id, event_id, user_id, events(name, price), date, location, status, created_at, negotiated_amount`,
+    )
+    .eq("user_id", userId)
+    .order("created_at", { ascending: false })
+
+  if (error) {
+    throw new Error(error.message)
+  }
+  
+
+  return data
+}
 
 export const getEventBookingsForOrganizer = async (organizerId: string) => {
   const supabase = await createClient();
