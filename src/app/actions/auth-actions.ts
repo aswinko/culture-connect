@@ -13,7 +13,6 @@ interface AuthResponse {
 export async function signup(formData: FormData): Promise<AuthResponse> {
   const supabase = await createClient();
 
-
   const email = formData.get("email") as string;
 
   // Check if user already exists
@@ -43,11 +42,11 @@ export async function signup(formData: FormData): Promise<AuthResponse> {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
     options: {
-        data: {
-            full_name: formData.get("full_name") as string,
-        },
-    }
-  }
+      data: {
+        full_name: formData.get("full_name") as string,
+      },
+    },
+  };
 
   const { data: signupData, error } = await supabase.auth.signUp(data);
 
@@ -88,24 +87,23 @@ export async function signup(formData: FormData): Promise<AuthResponse> {
   };
 }
 
-
 export async function login(formData: FormData): Promise<AuthResponse> {
   const supabase = await createClient();
 
   const data = {
     email: formData.get("email") as string,
     password: formData.get("password") as string,
-  }
+  };
 
-  const { data: signInData, error: authError } = await supabase.auth.signInWithPassword(data);
+  const { data: signInData, error: authError } =
+    await supabase.auth.signInWithPassword(data);
 
   if (authError || !signInData?.user) {
-
     return {
-      error: authError?.message || 'There was an error logging in!',
+      error: authError?.message || "There was an error logging in!",
       success: false,
       data: null,
-    }
+    };
   }
 
   const userId = signInData.user.id;
@@ -131,13 +129,11 @@ export async function login(formData: FormData): Promise<AuthResponse> {
   };
 }
 
-
 export async function logout(): Promise<void> {
   const supabase = await createClient();
   await supabase.auth.signOut();
-  redirect('/login')
+  redirect("/login");
 }
-
 
 export async function getUserProfile() {
   const supabase = await createClient();
@@ -167,7 +163,6 @@ export async function getUserProfile() {
 
   return profile;
 }
-
 
 export async function getUserRole(): Promise<string | null> {
   const supabase = await createClient();
@@ -225,7 +220,6 @@ export async function getCurrentUser(): Promise<User | null> {
   return userProfile;
 }
 
-
 export async function getAllUsers(): Promise<User[] | null> {
   const supabase = await createClient();
 
@@ -237,21 +231,39 @@ export async function getAllUsers(): Promise<User[] | null> {
   if (error || !data) {
     console.error("Error fetching users:", error.message);
     return null;
-    }
-
-    return data;
   }
 
+  return data;
+}
 
-  export async function getAllUserRoles() {
-       const supabase = await createClient();
+export async function getAllUserRoles() {
+  const supabase = await createClient();
 
-      const { data, error } = await supabase.from("user_profiles").select("user_id, role");
-  
-      if (error) {
-        console.error("Error fetching user roles:", error);
-        return [];
-      }
-  
-      return data; // Array of { user_id, role }
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .select("user_id, role");
+
+  if (error) {
+    console.error("Error fetching user roles:", error);
+    return [];
+  }
+
+  return data; // Array of { user_id, role }
+}
+
+export async function getUserById(id: string): Promise<User[] | null> {
+  const supabase = await createClient();
+
+  // Fetch users along with their roles
+  const { data, error } = await supabase
+    .from("user_profiles")
+    .select("*")
+    .eq("user_id", id);
+
+  if (error || !data) {
+    console.error("Error fetching users:", error.message);
+    return null;
+  }
+
+  return data;
 }

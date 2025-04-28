@@ -49,25 +49,12 @@ export default async function CheckoutPage({ params }: Params) {
               </div>
             </div>
             <div className="bg-muted/50 p-6 rounded-lg">
-              <h2 className="text-xl font-semibold mb-4">What's Included</h2>
-              <ul className="space-y-2">
-                <li className="flex items-start">
-                  <span className="mr-2">•</span>
-                  <span>Access to all keynote sessions</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2">•</span>
-                  <span>Networking opportunities with industry leaders</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2">•</span>
-                  <span>Workshop materials and resources</span>
-                </li>
-                <li className="flex items-start">
-                  <span className="mr-2">•</span>
-                  <span>Lunch and refreshments for all days</span>
-                </li>
-              </ul>
+              <h2 className="text-xl font-semibold mb-4">What&apos;s Included</h2>
+              <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
+                {event?.agendas?.map((agenda, index) => (
+                    <li key={index}>{agenda}</li>
+                ))}
+                </ul>
             </div>
           </div>
           <div>

@@ -35,8 +35,7 @@ export default function AllEventsClient({
     events.filter((event: Event) => {
       const matchesSearch =
         event.name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.description.toLowerCase().includes(searchQuery.toLowerCase()) ||
-        event.location.toLowerCase().includes(searchQuery.toLowerCase());
+        event.description.toLowerCase().includes(searchQuery.toLowerCase())
       const matchesCategory =
         activeCategory === "all" || event.category_id === activeCategory;
       return matchesSearch && matchesCategory;

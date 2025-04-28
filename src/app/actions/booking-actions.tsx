@@ -6,6 +6,7 @@ export async function createBooking({
   name,
   address,
   location,
+  location_cords,
   date,
   negotiatedAmount,
   eventId,
@@ -18,6 +19,10 @@ export async function createBooking({
   negotiatedAmount: number
   eventId: string
   userId: string
+  location_cords: {
+    lat: number;
+    lng: number;
+  }
 }) {
   const supabase = await createClient()
 
@@ -26,6 +31,7 @@ export async function createBooking({
     name,
     address,
     location,
+    location_cords,
     date,
     negotiated_amount: negotiatedAmount,
     event_id: eventId,

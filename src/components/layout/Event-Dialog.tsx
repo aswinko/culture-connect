@@ -17,7 +17,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";
-import { addEvent, getAllCategories, uploadEventImage } from "@/app/actions/event-actions";
+import { addEvent, getAllCategories, uploadEventImage, uploadEventVideo } from "@/app/actions/event-actions";
 import { createClient } from "@/utils/supabase/client";
 
 // ✅ Define Zod schema for validation
@@ -25,12 +25,13 @@ const eventSchema = z.object({
   name: z.string().min(3, "Event name must be at least 3 characters long."),
   price: z.string().min(1, "Price is required.").regex(/^\d+$/, "Price must be a valid number."),
   description: z.string().min(10, "Description must be at least 10 characters long."),
-  long_description: z.string().min(10, "Long description must be at least 10 characters long."),
+  // long_description: z.string().min(10, "Long description must be at least 10 characters long."),
   features: z.array(z.string().min(2, "Each feature must have at least 2 characters.")).min(1, "At least one feature is required."),
   agendas: z.array(z.string().min(2, "Each agenda must have at least 2 characters.")).min(1, "At least one agenda is required."),
   categoryId: z.string().min(1, "Please select a category."),
-  date: z.string().min(1, "Date is required."),
+  // date: z.string().min(1, "Date is required."),
   image: z.any().refine((files) => files?.[0] instanceof File, "Please select a valid file."),
+  video: z.any().refine((files) => files?.[0] instanceof File, "Please select a valid file."),
 });
 
 
@@ -56,6 +57,7 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
   });
 
   const fileRef = register("image");
+  const videoRef = register("video");
 
   // ✅ Fetch categories on mount
   useEffect(() => {
@@ -116,7 +118,9 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
     }
 
     let imageUrl = null;
+    let videoUrl = null;
     const file = data.image?.[0];
+    const videoFile = data.video?.[0];
 
     // ✅ Upload image to Supabase Storage
     if (file) {
@@ -130,18 +134,32 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
       imageUrl = uploadedImageUrl;
     }
 
+
+    // ✅ Upload image to Supabase Storage
+    if (videoFile) {
+      const { success, error, videoUrl: uploadedVideoUrl } = await uploadEventVideo(videoFile);
+      if (!success) {
+        console.log(error);
+        toast.error(error || "Video upload failed");
+        setLoading(false);
+        return;
+      }
+      videoUrl = uploadedVideoUrl;
+    }
+
     // ✅ Insert event into database
     const { success, error } = await addEvent({
-      userId: user.user.id,
+      user_id: user.user.id,
       name: data.name,
       price: parseFloat(data.price),
       description: data.description,
-      long_description: data.long_description,
-      date: new Date(data.date),
+      // long_description: data.long_description,
+      // date: new Date(data.date),
       features,
       agendas,
       category_id: data.categoryId,
       image: imageUrl || "",
+      video: videoUrl || "",
     });
     
 
@@ -260,19 +278,26 @@ export default function EventDialog({ onClose }: { onClose: () => void }) {
             {errors.image && <p className="text-red-500 text-sm">{errors.image.message as string}</p>}
           </div>
 
-          {/* Long Description */}
+          {/* Event Videp Upload */}
           <div className="mb-4">
+            <Label>Video</Label>
+            <Input type="file" accept="video/*" {...videoRef} />
+            {errors.video && <p className="text-red-500 text-sm">{errors.video.message as string}</p>}
+          </div>
+
+          {/* Long Description */}
+          {/* <div className="mb-4">
             <Label>Long Description</Label>
             <Textarea {...register("long_description")} />
             {errors.long_description && <p className="text-red-500 text-sm">{errors.long_description.message}</p>}
-          </div>
+          </div> */}
 
           {/* Date */}
-          <div className="mb-4">
+          {/* <div className="mb-4">
             <Label>Date</Label>
             <Input type="date" {...register("date")} />
             {errors.date && <p className="text-red-500 text-sm">{errors.date.message}</p>}
-          </div>
+          </div> */}
 
 
           {/* Footer Buttons */}

@@ -1,7 +1,7 @@
 // Event interface
 export interface Event {
   id?: string;
-  userId: string;
+  user_id: string;
   name: string;
   price: number;
   description: string;
@@ -17,4 +17,7 @@ export interface Event {
   date?: Date;
   organizer?: string;
   agendas?: string[]; // Can replace with a specific type/interface if known
+  starting_price?: number;
+  ending_price?: number;
+  video: string;
 }

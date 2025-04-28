@@ -9,6 +9,7 @@ interface UploadResponse {
     success: boolean;
     error: string | null;
     imageUrl?: string;
+    videoUrl?: string;
 }
 
 interface EventResponse {
@@ -53,16 +54,46 @@ export async function uploadEventImage(file: File): Promise<UploadResponse> {
     return { success: true, error: null, imageUrl };
 }
 
+
+export async function uploadEventVideo(file: File): Promise<UploadResponse> {
+    if (!file) return { success: false, error: "No file provided" };
+  
+    const supabase = await createClient();
+    const fileName = `${randomUUID()}-${file.name}`; // Unique file name
+  
+    // ✅ Upload file to Supabase Storage
+    const {  error } = await supabase.storage
+      .from("event-video") // ✅ Ensure this matches your actual bucket name
+      .upload(`videos/${fileName}`, file, {
+        cacheControl: "3600",
+        upsert: false,
+      });
+  
+    if (error) return { success: false, error: error.message };
+  
+    // ✅ Correctly Get Public URL
+    const { data: urlData } = supabase.storage
+      .from("event-video")
+      .getPublicUrl(`videos/${fileName}`);
+  
+    const videoUrl = urlData.publicUrl;
+  
+    console.log("VidEO URL:", videoUrl);
+  
+    return { success: true, error: null, videoUrl };
+}
+
 export async function addEvent({
-  userId,
+  user_id,
   name,
   price,
   description,
-  long_description,
-  date,
+  // long_description,
+  // date,
   features,
   category_id,
   image,
+  video,
   agendas,
   status = "approved", // Default status
 }: Event ): Promise<EventResponse> {
@@ -73,13 +104,14 @@ export async function addEvent({
   // ✅ Insert event into Supabase Database
   const { error: insertError } = await supabase.from("events").insert([
     {
-      user_id: userId,
+      user_id: user_id,
       name: name,
       price,
       description,
-      long_description,
-      date,
+      // long_description,
+      // date,
       image: image || null,
+      video: video || null,
       category_id: category_id,
       status,
       created_at: new Date(),
@@ -245,7 +277,7 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
     // Fetch related events (same category, exclude current event)
     const { data: relatedEvents } = await supabase
       .from("events")
-      .select("id, name, price, image")
+      .select("*")
       .eq("category_id", event.category_id)
       .neq("id", id) // Exclude current event
       .limit(4); // Get only 4 related events

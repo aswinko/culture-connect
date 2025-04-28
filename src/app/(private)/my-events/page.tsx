@@ -38,8 +38,9 @@ const MyEvents = async () => {
     <>
       <Navbar />
       <div className="flex flex-col min-h-screen">
-        <main className="flex-1">
-          <section className="container mx-auto mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
+        <main className="flex-1 container mx-auto">
+          <h2 className='text-5xl font-bold py-6 text-gray-700'>My Events</h2>
+          <section className=" mt-6 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6">
             {events?.map((event: { id: string; name: string; description: string; image: string; price: number }, index: number) => (
               <div className="hover:scale-[102%] transition-transform duration-300" key={index}>
                 <EventCard title={event.name} description={event.description} imageUrl={event.image} price={event.price} />

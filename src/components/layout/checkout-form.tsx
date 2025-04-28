@@ -18,6 +18,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { createBooking } from "@/app/actions/booking-actions";
 import { toast } from "sonner";
+import MapPin from "./MapPin";
 
 export function CheckoutForm({
   eventId,
@@ -35,7 +36,13 @@ export function CheckoutForm({
     address: "",
     date: "",
     negotiatedAmount: "0",
+    location_cords: { lat: 0, lng: 0 },
   });
+
+
+  const handleLocationSelect = (location_cords: { lat: number; lng: number }) => {
+    setFormData((prev) => ({ ...prev, location_cords }));
+  };
 
   const handleChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -108,6 +115,9 @@ export function CheckoutForm({
               value={formData.location}
               onChange={(e) => handleChange("location", e.target.value)}
             />
+          </div>
+          <div className="space-y-2">
+            <MapPin onLocationSelect={handleLocationSelect} />
           </div>
 
           <div className="space-y-2">

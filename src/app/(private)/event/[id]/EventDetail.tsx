@@ -11,11 +11,11 @@ import { Badge } from "@/components/ui/badge"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Event } from "@/types/Event"
+import { User } from "@/types/User"
 
-
-const EventDetail = ({ event }: { event: Event;}) => {
+const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[] | null; relatedEvents: {relatedEvents: Event[]}}) => {
     // const toastId = useId()
-  
+    
     const router = useRouter()
   
     if (!event) {
@@ -57,7 +57,7 @@ const EventDetail = ({ event }: { event: Event;}) => {
                 className="object-cover"
                 priority
               />
-              <Badge className="absolute top-4 left-4 bg-primary/80 hover:bg-primary">Bidding Open</Badge>
+              <Badge className="absolute top-4 left-4 bg-primary/80 hover:bg-primary">Event Live</Badge>
             </div>
           </div>
 
@@ -86,17 +86,26 @@ const EventDetail = ({ event }: { event: Event;}) => {
                   </div>
                 </div>
                 <div className="space-y-2">
-                  <Button variant="default" className="w-full" onClick={()=> handleCheckout(event?.id || '')}>
-                    Proceed to Checkout
-                  </Button> 
+                  {
+                    user? (
+                      <Button variant="default" className="w-full" onClick={()=> handleCheckout(event?.id || '')}>
+                        Proceed to Checkout
+                      </Button> 
+                    ) : (
+                      <Link href={"/login"} className="w-full bg-black rounded-sm px-4 py-2 text-white">
+                        You need to sign in first, <span className="text-red-500">Click here</span>
+                      </Link> 
+                    )
+                  }
+
                 </div>
 
                 <div className="bg-muted p-3 rounded-md">
                   <div className="flex items-start gap-2 text-xs text-muted-foreground">
                     <Info className="h-4 w-4 flex-shrink-0 mt-0.5" />
                     <p>
-                      The highest bidder at the end of the bidding period will secure this event. A 20% deposit is
-                      required within 24 hours of winning.
+                      Upon booking an event, a 20% deposit is required. The organizer will then review the booking request and may 
+                      choose to accept or decline it.
                     </p>
                   </div>
                 </div>
@@ -123,7 +132,6 @@ const EventDetail = ({ event }: { event: Event;}) => {
                 <TabsTrigger value="agenda">Agenda</TabsTrigger>
               </TabsList>
               <TabsContent value="details" className="pt-4 space-y-4">
-                <p className="text-muted-foreground">{event?.long_description}</p>
                 <h4 className="font-medium mt-4 mb-2">Event Features:</h4>
                 <ul className="list-disc pl-5 space-y-1 text-muted-foreground">
                   {event?.features.map((feature, index) => (
@@ -144,29 +152,36 @@ const EventDetail = ({ event }: { event: Event;}) => {
             <div>
               <h3 className="text-xl font-bold mb-4">About the Organizer</h3>
               <Card>
-                <CardContent className="pt-6">
+                <CardContent className="pt-1">
                   <div className="flex items-start gap-4">
                     <Avatar className="h-12 w-12">
                       <AvatarImage src={`/placeholder.svg?text=₹{event?.organizer?.charAt(0)}`} />
-                      <AvatarFallback>{event?.organizer?.charAt(0)}</AvatarFallback>
+                      <AvatarFallback>{user?.[0]?.full_name?.charAt(0) || '?'}</AvatarFallback>
                     </Avatar>
                     <div>
-                      <h4 className="font-medium">{event?.organizer}</h4>
+                      <h4 className="font-medium">{user?.[0]?.full_name || 'Unknown User'}</h4>
                       <p className="text-muted-foreground text-sm mt-1">
-                        Professional event organizer with over 10 years of experience in hosting premium events.
+                        {user?.[0]?.bio || 'No bio available'}
                       </p>
-                      <div className="flex gap-2 mt-2">
+                      {/* <div className="flex gap-2 mt-2">
                         <Button variant="outline" size="sm">
                           View Profile
                         </Button>
                         <Button variant="ghost" size="sm">
                           Contact
                         </Button>
-                      </div>
+                      </div> */}
                     </div>
                   </div>
                 </CardContent>
               </Card>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold mb-4">Previous Works</h3>
+              <video controls className="w-full rounded-lg">
+                <source src={event?.video} />
+                Your browser does not support the video tag.
+              </video>            
             </div>
           </div>
 
@@ -174,43 +189,37 @@ const EventDetail = ({ event }: { event: Event;}) => {
           <div>
             <Card className="mb-6">
               <CardHeader>
-                <CardTitle>Bidding Rules</CardTitle>
+                <CardTitle>Booking Information</CardTitle>
               </CardHeader>
               <CardContent className="space-y-4">
                 <div className="space-y-2">
-                  <h4 className="font-medium">How Bidding Works</h4>
+                  <h4 className="font-medium">How Booking Works</h4>
                   <p className="text-sm text-muted-foreground">
-                    Place your bid for this event. The highest bidder when the bidding period ends will secure the
-                    booking.
-                  </p>
-                </div>
-                <Separator />
-                <div className="space-y-2">
-                  <h4 className="font-medium">Minimum Bid Increment</h4>
-                  <p className="text-sm text-muted-foreground">
-                    Each new bid must be at least ₹100 higher than the current highest bid.
+                    Submit a booking request for the event. A 20% deposit is required at the time of booking. 
+                    The event organizer will review the request and may approve or decline it.
                   </p>
                 </div>
                 <Separator />
                 <div className="space-y-2">
                   <h4 className="font-medium">Deposit Requirement</h4>
                   <p className="text-sm text-muted-foreground">
-                    The winning bidder must pay a 20% non-refundable deposit within 24 hours of the bidding end.
+                    A 20% refundable deposit must be paid during the booking process. 
+                    This deposit secures your booking request pending organizer approval.
                   </p>
                 </div>
                 <Separator />
                 <div className="space-y-2">
-                  <h4 className="font-medium">Buy Now Option</h4>
+                  <h4 className="font-medium">Approval Process</h4>
                   <p className="text-sm text-muted-foreground">
-                    Skip the bidding process by selecting the &quot;Buy Now&quot; option at the listed price.
+                    Once a booking request is submitted with the deposit, the event organizer will review it and decide whether to accept or decline the request.
                   </p>
                 </div>
                 <Separator />
                 <div className="space-y-2">
                   <h4 className="font-medium">Cancellation Policy</h4>
                   <p className="text-sm text-muted-foreground">
-                    Cancellations made more than 30 days before the event date are eligible for a 50% refund of the
-                    amount paid beyond the non-refundable deposit.
+                    In case of cancellation by the requester, the 20% deposit remains refundable. 
+                    Additional refunds, if any, are subject to the organizer&apos;s discretion.
                   </p>
                 </div>
               </CardContent>
@@ -251,40 +260,29 @@ const EventDetail = ({ event }: { event: Event;}) => {
         {/* Similar Events */}
         <div className="mt-16">
           <h2 className="text-2xl font-bold mb-6">Similar Events</h2>
-          {/* <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-            {Object.values(events)
-              .filter((e) => e.id !== eventId)
-              .map((similarEvent) => (
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+            {relatedEvents.relatedEvents.map((similarEvent) => (
                 <Link key={similarEvent.id} href={`/event/₹{similarEvent.id}`}>
                   <Card className="h-full overflow-hidden transition-all hover:shadow-md">
                     <div className="relative aspect-video">
                       <Image
-                        src={similarEvent.images[0] || "/placeholder.svg"}
+                        src={similarEvent.image || "/placeholder.svg"}
                         alt={similarEvent.name}
                         fill
                         className="object-cover transition-transform hover:scale-105"
                       />
-                      <Badge className="absolute top-2 right-2 bg-primary/80 hover:bg-primary">Bidding</Badge>
+                      <Badge className="absolute top-2 right-2 bg-primary/80 hover:bg-primary">New</Badge>
                     </div>
                     <CardContent className="p-4">
                       <h3 className="font-medium line-clamp-1">{similarEvent.name}</h3>
-                      <p className="text-sm text-muted-foreground mt-1">{format(similarEvent.date, "MMMM d, yyyy")}</p>
-                      <div className="flex justify-between items-center mt-2">
-                        <div className="flex items-center gap-1">
-                          <Gavel className="h-3 w-3 text-primary" />
-                          <span className="text-xs text-muted-foreground">Current bid:</span>
-                        </div>
-                        <p className="text-sm font-bold">₹{similarEvent.currentBid.toLocaleString()}</p>
-                      </div>
                       <div className="flex justify-between items-center mt-1 text-xs text-muted-foreground">
-                        <span>Starting: ₹{similarEvent.startingPrice.toLocaleString()}</span>
-                        <span>Buy now: ₹{similarEvent.endingPrice.toLocaleString()}</span>
+                        <span>Buy now: ₹{similarEvent.price?.toLocaleString()}</span>
                       </div>
                     </CardContent>
                   </Card>
                 </Link>
               ))}
-          </div> */}
+          </div>
         </div>
       </div>
     </>

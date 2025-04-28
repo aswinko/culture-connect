@@ -51,7 +51,6 @@ import {
   DialogHeader,
   DialogTitle,
 } from "@/components/ui/dialog";
-import { Textarea } from "@/components/ui/textarea";
 import { getCurrentUser } from "@/app/actions/auth-actions";
 import {
   getEventBookingsForOrganizer,

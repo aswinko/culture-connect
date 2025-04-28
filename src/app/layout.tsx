@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 // import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "sonner";
-import { ThemeProvider } from "@/providers/theme-provider";
+// import { ThemeProvider } from "@/providers/theme-provider";
 import Script from "next/script";
 
 // const geistSans = Geist({
@@ -26,11 +26,11 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en">
+    <html lang="en" >
       <body
         className={`antialiased`}
       >
-        <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange>
+        {/* <ThemeProvider attribute="class" defaultTheme="system" enableSystem disableTransitionOnChange> */}
 
         <Script
           src="https://checkout.razorpay.com/v1/checkout.js"
@@ -38,7 +38,7 @@ export default function RootLayout({
         />
         {children}
         <Toaster richColors />
-        </ThemeProvider>
+        {/* </ThemeProvider> */}
 
 
       </body>
