@@ -24,15 +24,15 @@ import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import { toast } from "sonner";
 import { Booking, BookingStatus } from "@/types/Booking";
-
-// Types for our booking data
+import { ReviewForm } from "@/components/layout/ReviewForm";
+import SignAgreement from "@/components/layout/SignAgreement";
 
 export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
-  // const [bookings, setBookings] = useState<Booking[]>([])
   const [isLoading, setIsLoading] = useState(false);
+  const [agreementSigned, setAgreementSigned] = useState(false);
+
   const toastId = useId();
 
-  // Helper function to render status badge
   const renderStatusBadge = (status: BookingStatus) => {
     switch (status) {
       case "confirmed":
@@ -88,21 +88,23 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
         }),
       });
 
-      if (!res.ok) {
-        throw new Error("Failed to create Razorpay order");
-      }
+      if (!res.ok) throw new Error("Failed to create Razorpay order");
 
       const order = await res.json();
 
       const options = {
         key: process.env.NEXT_PUBLIC_RAZORPAY_KEY_ID!,
-        amount: order.amount, // in paise
+        amount: order.amount,
         currency: order.currency,
         name: "CultureConnect",
         description: "Program Booking Payment",
         image: "/logo.png",
         order_id: order.id,
-        handler: async function (response: { razorpay_order_id: string; razorpay_payment_id: string; razorpay_signature: string }) {
+        handler: async function (response: {
+          razorpay_order_id: string;
+          razorpay_payment_id: string;
+          razorpay_signature: string;
+        }) {
           const res = await fetch("/api/payment/verify", {
             method: "POST",
             body: JSON.stringify({
@@ -119,7 +121,6 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
           const result = await res.json();
           if (result?.success) {
             toast.success("Payment successful!", { id: toastId });
-            //refresh the page to show updated booking status
             window.location.reload();
           } else {
             toast.error("Payment verification failed.", { id: toastId });
@@ -130,24 +131,22 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
           email: "your@email.com",
           contact: "9876543210",
         },
-        theme: {
-          color: "#3399cc",
-        },
+        theme: { color: "#3399cc" },
       };
+
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       if (!(window as any).Razorpay) {
-        toast.error("Razorpay SDK not loaded. Please refresh the page.", {
-          id: toastId,
-        });
+        toast.error("Razorpay SDK not loaded. Please refresh.", { id: toastId });
         setIsLoading(false);
         return;
       }
 
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       const rzp = new (window as any).Razorpay(options);
       rzp.open();
-      
     } catch (error) {
       console.error("Payment Error:", error);
-      toast.error(`Payment failed. Please try again.${error}`, { id: toastId });
+      toast.error(`Payment failed. Try again. ${error}`, { id: toastId });
     } finally {
       setIsLoading(false);
     }
@@ -167,7 +166,7 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
           <div className="text-center py-12 bg-muted/50 rounded-lg">
             <h2 className="text-xl font-semibold mb-2">No bookings found</h2>
             <p className="text-muted-foreground mb-4">
-              You haven t made any event bookings yet.
+              You haven’t made any event bookings yet.
             </p>
             <Link href="/">
               <Button>Book Your First Event</Button>
@@ -175,85 +174,114 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
           </div>
         ) : (
           <div className="space-y-6">
-            {bookings.map((booking) => (
-              <Card key={booking.id}>
-                <CardHeader className="pb-3">
-                  <div className="flex justify-between items-start">
-                    <div>
-                      <CardTitle className="text-4xl">
-                        {booking.events.name}
-                      </CardTitle>
-                      <CardDescription className="flex items-center mt-1">
-                        <Calendar className="h-4 w-4 mr-1" />
-                        {booking.date}
-                      </CardDescription>
-                    </div>
-                    {renderStatusBadge(booking.status)}
-                  </div>
-                </CardHeader>
-                <CardContent className="pb-3">
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                    <div>
-                      <div className="text-sm text-muted-foreground">
-                        Location
+            {bookings.map((booking) => {
+              return (
+                <Card key={booking.id}>
+                  <CardHeader className="pb-3">
+                    <div className="flex justify-between items-start">
+                      <div>
+                        <CardTitle className="text-4xl">
+                          {booking.events.name}
+                        </CardTitle>
+                        <CardDescription className="flex items-center mt-1">
+                          <Calendar className="h-4 w-4 mr-1" />
+                          {booking.date}
+                        </CardDescription>
                       </div>
-                      <div className="flex items-center">
-                        <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
-                        {booking.location}
-                      </div>
+                      {renderStatusBadge(booking.status)}
                     </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">
-                        Booking Date
+                  </CardHeader>
+                  <CardContent className="pb-3">
+                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                      <div>
+                        <div className="text-sm text-muted-foreground">Location</div>
+                        <div className="flex items-center">
+                          <MapPin className="h-4 w-4 mr-1 text-muted-foreground" />
+                          {booking.location}
+                        </div>
                       </div>
                       <div>
-                        {new Date(booking.created_at).toLocaleDateString()}
+                        <div className="text-sm text-muted-foreground">Booking Date</div>
+                        <div>{new Date(booking.created_at).toLocaleDateString()}</div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Price</div>
+                        <div className="font-medium">
+                          ₹{booking.events.price.toFixed(2)}
+                        </div>
+                      </div>
+                      <div>
+                        <div className="text-sm text-muted-foreground">Booking ID</div>
+                        <div className="font-mono text-sm">{booking.id}</div>
                       </div>
                     </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">Price</div>
-                      <div className="font-medium">
-                        ₹{booking.events.price.toFixed(2)}
+                  </CardContent>
+                  <Separator />
+                  <CardFooter className="pt-4">
+                    {booking.status === "confirmed" ? (
+                      <div className="space-y-4 w-full">
+                        <div className="border p-4 rounded-md bg-muted/40">
+                          <p className="text-sm mb-2">
+                            Please read and sign the agreement before proceeding to payment.
+                          </p>
+                          <div className="flex items-center justify-between">
+                          {/* <Button
+                            variant="outline"
+                            onClick={() =>
+                              window.open(
+                                `/api/generate-agreement?user=${user.full_name}&organizer=${organizer.full_name}`,
+                                "_blank"
+                              )
+                            }
+                          >
+                            View Agreement
+                          </Button> */}
+                          <SignAgreement user="aswin" organizer="adhi" />
+                            <label className="flex items-center space-x-2 text-sm">
+                              <input
+                                type="checkbox"
+                                checked={agreementSigned}
+                                onChange={(e) => setAgreementSigned(e.target.checked)}
+                              />
+                              <span>I have signed the agreement</span>
+                            </label>
+                          </div>
+                        </div>
+
+                        <Button
+                          className="w-full"
+                          onClick={() => handlePayment(booking)}
+                          disabled={isLoading || !agreementSigned}
+                        >
+                          <CreditCard className="h-4 w-4 mr-2" />
+                          Pay ₹
+                          {Math.round(
+                            (booking.negotiated_amount || booking.events.price) * 0.2
+                          )}{" "}
+                          Now
+                        </Button>
                       </div>
-                    </div>
-                    <div>
-                      <div className="text-sm text-muted-foreground">
-                        Booking ID
+                    ) : booking.status === "paid" ? (
+                      <div className="w-full space-y-4">
+                        <div className="text-center text-sm text-green-700">
+                          You have successfully paid
+                        </div>
+                        <ReviewForm
+                          bookingId={booking.id}
+                          userId={booking.user_id ?? ""}
+                        />
                       </div>
-                      <div className="font-mono text-sm">{booking.id}</div>
-                    </div>
-                  </div>
-                </CardContent>
-                <Separator />
-                <CardFooter className="pt-4">
-                  {booking.status === "confirmed" ? (
-                    <Button
-                      className="w-full"
-                      onClick={() => handlePayment(booking)}
-                      disabled={isLoading}
-                    >
-                      <CreditCard className="h-4 w-4 mr-2" />
-                      Pay ₹
-                      {Math.round(
-                        (booking.negotiated_amount || booking.events.price) *
-                          0.2
-                      )}{" "}
-                      Now
-                    </Button>
-                  ) : booking.status === "paid" ? (
-                    <div className="w-full text-center text-sm  text-green-700">
-                      You have successfully paid
-                    </div>
-                  ) : (
-                    <div className="w-full text-center text-sm text-muted-foreground">
-                      {booking.status === "pending"
-                        ? "Waiting for organizer approval"
-                        : "This booking was rejected by the organizer"}
-                    </div>
-                  )}
-                </CardFooter>
-              </Card>
-            ))}
+                    ) : (
+                      <div className="w-full text-center text-sm text-muted-foreground">
+                        {booking.status === "pending"
+                          ? "Waiting for organizer approval"
+                          : "This booking was rejected by the organizer"}
+                      </div>
+                    )}
+                  </CardFooter>
+                </Card>
+              );
+            })}
           </div>
         )}
       </div>

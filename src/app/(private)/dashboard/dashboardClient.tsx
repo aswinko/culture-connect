@@ -5,7 +5,6 @@ import type React from "react";
 import { Label } from "@/components/ui/label";
 
 import { useState, useEffect, useId } from "react";
-import Link from "next/link";
 import {
   Calendar,
   Clock,
@@ -509,7 +508,7 @@ function BookingCard({
           <div>
             <div className="text-muted-foreground">Price</div>
             <div className="font-medium">
-              ${booking.negotiated_amount.toFixed(2)}
+              ₹{booking.negotiated_amount.toFixed(2)}
             </div>
           </div>
           <div>

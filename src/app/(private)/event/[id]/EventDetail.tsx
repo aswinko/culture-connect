@@ -12,6 +12,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
 import { Event } from "@/types/Event"
 import { User } from "@/types/User"
+import ReviewSection from "@/components/layout/ReviewSection"
 
 const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[] | null; relatedEvents: {relatedEvents: Event[]}}) => {
     // const toastId = useId()
@@ -163,14 +164,6 @@ const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[
                       <p className="text-muted-foreground text-sm mt-1">
                         {user?.[0]?.bio || 'No bio available'}
                       </p>
-                      {/* <div className="flex gap-2 mt-2">
-                        <Button variant="outline" size="sm">
-                          View Profile
-                        </Button>
-                        <Button variant="ghost" size="sm">
-                          Contact
-                        </Button>
-                      </div> */}
                     </div>
                   </div>
                 </CardContent>
@@ -183,9 +176,10 @@ const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[
                 Your browser does not support the video tag.
               </video>            
             </div>
+            <ReviewSection />
           </div>
 
-          {/* Bidding Rules */}
+          {/* Buying Rules */}
           <div>
             <Card className="mb-6">
               <CardHeader>

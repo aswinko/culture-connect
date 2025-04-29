@@ -12,8 +12,6 @@ export interface Booking {
   events: {
     name: string;
     price: number;
-    location?: string;
-    date?: string;
   };
   user_profiles?: {
     full_name: string;

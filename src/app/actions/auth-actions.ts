@@ -226,7 +226,7 @@ export async function getAllUsers(): Promise<User[] | null> {
   // Fetch users along with their roles
   const { data, error } = await supabase
     .from("user_profiles")
-    .select("user_id, full_name, email, phone, bio, created_at");
+    .select("*");
 
   if (error || !data) {
     console.error("Error fetching users:", error.message);
@@ -266,4 +266,21 @@ export async function getUserById(id: string): Promise<User[] | null> {
   }
 
   return data;
+}
+
+
+export async function updateUserStatus(userId: string, newStatus: string) {
+  const supabase = await createClient();
+
+  const { error } = await supabase
+    .from("user_profiles")
+    .update({ status: newStatus })
+    .eq("user_id", userId);
+
+  if (error) {
+    console.error("Failed to update user status:", error.message);
+    return { success: false, error: error.message };
+  }
+
+  return { success: true };
 }

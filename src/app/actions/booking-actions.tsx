@@ -96,8 +96,6 @@ export const getEventBookingsForOrganizer = async (organizerId: string) => {
     date,
     events (
       name,
-      location,
-      date,
       price
     ),
     user_profiles (

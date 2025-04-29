@@ -1,6 +1,6 @@
 import type React from "react"
 import Link from "next/link"
-import { Bell, ChevronDown, LogOut, Menu, Music, Settings, User } from "lucide-react"
+import { ChevronDown, LogOut, Menu, Music, Settings, User } from "lucide-react"
 
 import { Button } from "@/components/ui/button"
 import {
@@ -67,10 +67,10 @@ export default async function DashboardLayout({ children }: { children: React.Re
                 </Button>
               </Link> */}
             {/* )} */}
-            <Button variant="outline" size="icon">
+            {/* <Button variant="outline" size="icon">
               <Bell className="h-5 w-5" />
               <span className="sr-only">Toggle notifications</span>
-            </Button>
+            </Button> */}
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
                 <Button variant="outline" size="sm" className="gap-1">
