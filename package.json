@@ -49,6 +49,7 @@
     "react-hook-form": "^7.54.2",
     "react-signature-canvas": "^1.1.0-alpha.2",
     "shadcn": "^2.4.0-canary.11",
+    "signature_pad": "^5.0.7",
     "sonner": "^2.0.1",
     "tailwind-merge": "^3.0.2",
     "tailwindcss-animate": "^1.0.7",

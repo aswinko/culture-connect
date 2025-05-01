@@ -52,7 +52,7 @@ export async function getBookingsByCurrentUser(userId: string) {
   const { data, error } = await supabase
     .from("booking")
     .select(
-      `id, event_id, user_id, events(name, price), date, location, status, created_at, negotiated_amount`,
+      `id, event_id, user_id, events(name, price, user_id), date, location, status, created_at, negotiated_amount`,
     )
     .eq("user_id", userId)
     .order("created_at", { ascending: false })
@@ -94,9 +94,11 @@ export const getEventBookingsForOrganizer = async (organizerId: string) => {
     location,
     created_at,
     date,
+    user_id,
     events (
       name,
-      price
+      price,
+      user_id
     ),
     user_profiles (
       full_name,

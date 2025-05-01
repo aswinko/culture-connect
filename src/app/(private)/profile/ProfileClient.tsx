@@ -35,7 +35,7 @@ const Profile = () => {
 
   return (
     <>      
-      <div className="container mx-auto p-6 grid grid-cols-1 md:grid-cols-3 gap-8 h-screen">
+      <div className="container mx-auto p-6 flex flex-col md:flex-row justify-evenly gap-8 h-screen">
         {/* Left Side: Profile Info */}
         <Card className="p-6 md:max-w-sm shadow-accent bg-white dark:bg-gray-900 transition-all h-fit">
           <CardHeader className="flex flex-col items-center text-center space-y-4">
@@ -68,7 +68,7 @@ const Profile = () => {
         </Card>
 
         {/* Right Side: No Listings Message */}
-        <Card className="p-6 border-0 col-span-2 max-w-full shadow-accent bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
+        <Card className="p-6 border-0 col-span-2 max-w-full h-fit shadow-accent bg-white dark:bg-gray-900 flex flex-col items-center justify-center">
           {/* <Image fill src="/empty-listing.svg" alt="No Listings" className="w-32 h-32" /> */}
           <h2 className="text-lg font-semibold text-gray-900 dark:text-gray-100 mt-4">Your Next Great Adventure Starts Here!</h2>
           <p className="text-sm text-gray-500 dark:text-gray-400">Let go of what you dont use anymore</p>
@@ -84,8 +84,6 @@ const Profile = () => {
         {
           isOpen && <EventDialog onClose={() => setIsOpen(false)} />
         }
-
-        {/* <EventForm /> */}
       </div>
     </>
   );

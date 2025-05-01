@@ -26,6 +26,7 @@ import { toast } from "sonner";
 import { Booking, BookingStatus } from "@/types/Booking";
 import { ReviewForm } from "@/components/layout/ReviewForm";
 import SignAgreement from "@/components/layout/SignAgreement";
+import BookingChatPage from "@/components/layout/BookingChat";
 
 export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
   const [isLoading, setIsLoading] = useState(false);
@@ -224,19 +225,8 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
                           <p className="text-sm mb-2">
                             Please read and sign the agreement before proceeding to payment.
                           </p>
-                          <div className="flex items-center justify-between">
-                          {/* <Button
-                            variant="outline"
-                            onClick={() =>
-                              window.open(
-                                `/api/generate-agreement?user=${user.full_name}&organizer=${organizer.full_name}`,
-                                "_blank"
-                              )
-                            }
-                          >
-                            View Agreement
-                          </Button> */}
-                          <SignAgreement user="aswin" organizer="adhi" />
+                          <div className="flex flex-col md:flex-row items-center justify-between">
+                            <SignAgreement user="aswin" organizer="adhi" />
                             <label className="flex items-center space-x-2 text-sm">
                               <input
                                 type="checkbox"
@@ -270,6 +260,12 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
                           bookingId={booking.id}
                           userId={booking.user_id ?? ""}
                         />
+                        <BookingChatPage
+                          name={"Organizer"}
+                          bookingId={booking.id}
+                          userId={booking.user_id ?? ""}
+                          organizerId={booking.events.user_id}
+                        />                      
                       </div>
                     ) : (
                       <div className="w-full text-center text-sm text-muted-foreground">

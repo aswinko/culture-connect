@@ -57,6 +57,7 @@ import {
 } from "@/app/actions/booking-actions";
 import { Booking, BookingStatus } from "@/types/Booking";
 import { toast } from "sonner";
+import BookingChatPage from "@/components/layout/BookingChat";
 
 // Types for our booking data
 
@@ -72,17 +73,16 @@ export default function OrganizerDashboardPage() {
   const [selectedBooking, setSelectedBooking] = useState<Booking | null>(null);
   const [isUpdateDialogOpen, setIsUpdateDialogOpen] = useState(false);
   const [newStatus, setNewStatus] = useState<BookingStatus>("pending");
-  const [statusNote, setStatusNote] = useState("");
+  const [, setStatusNote] = useState("");
 
   // Simulate fetching bookings from an API
   useEffect(() => {
     const fetchBookings = async () => {
       const user = await getCurrentUser();
-      console.log(user?.user_id);
+      // console.log(user?.user_id);
 
-      // Mock data
       const data = await getEventBookingsForOrganizer(user?.user_id as string);
-      console.log(data);
+      // console.log(data);
 
       setBookings(data);
       setFilteredBookings(data);
@@ -132,6 +132,13 @@ export default function OrganizerDashboardPage() {
           <Badge variant="destructive">
             <X className="h-3 w-3 mr-1" />
             Rejected
+          </Badge>
+        );
+      case "paid":
+        return (
+          <Badge className="bg-green-100 text-green-800 hover:bg-green-100">
+            <CheckCircle className="h-3 w-3 mr-1" />
+            Paid
           </Badge>
         );
       default:
@@ -278,13 +285,25 @@ export default function OrganizerDashboardPage() {
               </div>
             ) : (
               <div className="space-y-4">
-                {filteredBookings.map((booking) => (
+                {filteredBookings.map((booking, index) => (<>
                   <BookingCard
                     key={booking.id}
                     booking={booking}
                     onUpdateStatus={() => openUpdateDialog(booking)}
                     renderStatusBadge={renderStatusBadge}
                   />
+                  {
+                    booking.status === "paid" && (
+                      <BookingChatPage
+                      key={index}
+                      name={"User"}
+                      bookingId={booking.id}
+                      userId={booking.events.user_id ?? ""}
+                      organizerId={booking.user_id ?? ""}
+                    /> 
+                    )
+                  }
+                </>   
                 ))}
               </div>
             )}
@@ -333,12 +352,24 @@ export default function OrganizerDashboardPage() {
                 {filteredBookings
                   .filter((b) => b.status === "confirmed")
                   .map((booking) => (
-                    <BookingCard
-                      key={booking.id}
-                      booking={booking}
-                      onUpdateStatus={() => openUpdateDialog(booking)}
-                      renderStatusBadge={renderStatusBadge}
-                    />
+                    <>
+                      <BookingCard
+                        key={booking.id}
+                        booking={booking}
+                        onUpdateStatus={() => openUpdateDialog(booking)}
+                        renderStatusBadge={renderStatusBadge}
+                      />
+                      {
+                        booking.status === "paid" && (
+                          <BookingChatPage
+                            name={'User'}
+                            bookingId={booking.id}
+                            userId={booking.events.user_id ?? ""}
+                            organizerId={booking.user_id ?? ""}
+                          /> 
+                        ) 
+                      }
+                    </>
                   ))}
               </div>
             )}
@@ -518,7 +549,7 @@ function BookingCard({
               {new Date(booking.created_at).toLocaleDateString()}
             </div>
           </div>
-        </div>
+        </div>  
       </CardContent>
       <CardFooter className="pt-2">
         <Button
@@ -529,6 +560,7 @@ function BookingCard({
         >
           Update Status
         </Button>
+     
       </CardFooter>
     </Card>
   );
