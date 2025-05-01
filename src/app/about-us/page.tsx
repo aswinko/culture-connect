@@ -1,6 +1,6 @@
 import Image from "next/image"
 import Link from "next/link"
-import { ChevronRight, Users, Award, Shield, Star } from 'lucide-react'
+import { ChevronRight, Users, MessageCircle, Star, Music2 } from 'lucide-react'
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Separator } from "@/components/ui/separator"
@@ -10,53 +10,44 @@ import Footer from "@/components/layout/Footer"
 export default function AboutPage() {
   return (
     <>
-        <Navbar />      
+      <Navbar />
       {/* Hero Section */}
       <div className="relative w-full h-[400px] overflow-hidden">
         <Image 
-          src="/placeholder.svg?height=800&width=1600&text=About+EventBid" 
-          alt="About EventBid"
+          src="/banner2.jpg" 
+          alt="About Your Platform"
           fill
           className="object-cover"
           priority
         />
         <div className="absolute inset-0 bg-black/50 flex flex-col items-center justify-center text-white text-center px-4">
-          <h1 className="text-4xl md:text-5xl font-bold mb-4">About EventBid</h1>
-          <p className="text-xl max-w-3xl">Revolutionizing how events are booked through transparent bidding</p>
+          <h1 className="text-4xl md:text-5xl font-bold mb-4">About Our Platform</h1>
+          <p className="text-xl max-w-3xl">Simplifying event bookings with flexible payments and easy communication</p>
         </div>
       </div>
-      
+
       {/* Main Content */}
       <div className="container mx-auto px-4 py-16 max-w-7xl">
+
         {/* Our Story */}
         <div className="text-center max-w-3xl mx-auto mb-20">
-          <div>
-            <h2 className="text-3xl font-bold mb-6">Our Story</h2>
-            <p className="text-muted-foreground mb-4">
-              EventBid was founded in 2020 with a simple mission: to make premium event venues accessible through a transparent bidding process. We noticed that traditional event booking was often opaque, with hidden fees and limited options.
-            </p>
-            <p className="text-muted-foreground mb-4">
-              Our founders, with over 20 years of combined experience in event management and technology, created a platform that connects event organizers directly with venue owners, allowing for fair market pricing through competitive bidding.
-            </p>
-            <p className="text-muted-foreground">
-              Today, EventBid has facilitated over 5,000 successful events across the country, from intimate weddings to large corporate galas, saving our customers an average of 15% compared to traditional booking methods.
-            </p>
-          </div>
-          {/* <div className="relative h-[400px] rounded-lg overflow-hidden">
-            <Image 
-              src="/placeholder.svg?height=800&width=800&text=Our+Story" 
-              alt="Our Story"
-              fill
-              className="object-cover"
-            />
-          </div> */}
+          <h2 className="text-3xl font-bold mb-6">Our Story</h2>
+          <p className="text-muted-foreground mb-4">
+            We started with a vision to remove the complexity from event planning. Whether it's a small birthday party or a large cultural fest, our platform connects users with organizers and performers quickly and affordably.
+          </p>
+          <p className="text-muted-foreground mb-4">
+            By allowing users to book events and artists with just a 20% upfront payment — confirmed only after organizer approval — we provide both flexibility and trust. Plus, our in-app messaging makes planning easy and direct.
+          </p>
+          <p className="text-muted-foreground">
+            From booking a venue to hiring singers, guitarists, or entire bands — our platform is the all-in-one solution for a hassle-free event experience.
+          </p>
         </div>
-        
+
         {/* Our Mission */}
         <div className="text-center max-w-3xl mx-auto mb-20">
           <h2 className="text-3xl font-bold mb-6">Our Mission</h2>
           <p className="text-xl text-muted-foreground">
-            &quot;To create a transparent marketplace where event hosts can find their perfect venue at a fair price, and venue owners can maximize their bookings through competitive bidding.&quot;
+            &quot;To make event planning simple, transparent, and accessible — for everyone involved, from organizers to artists.&quot;
           </p>
           <Separator className="my-8" />
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
@@ -64,100 +55,51 @@ export default function AboutPage() {
               <div className="rounded-full bg-primary/10 p-3 mb-4">
                 <Users className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium text-lg mb-2">For Everyone</h3>
+              <h3 className="font-medium text-lg mb-2">Simple Booking</h3>
               <p className="text-sm text-muted-foreground">
-                Making premium venues accessible to all event organizers
+                Book venues and performers with just 20% upfront, confirmed after approval.
               </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="rounded-full bg-primary/10 p-3 mb-4">
-                <Award className="h-6 w-6 text-primary" />
+                <MessageCircle className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium text-lg mb-2">Quality First</h3>
+              <h3 className="font-medium text-lg mb-2">Direct Messaging</h3>
               <p className="text-sm text-muted-foreground">
-                Curating only the best venues and experiences
+                Chat with organizers or artists directly through our platform.
               </p>
             </div>
             <div className="flex flex-col items-center">
               <div className="rounded-full bg-primary/10 p-3 mb-4">
-                <Shield className="h-6 w-6 text-primary" />
+                <Music2 className="h-6 w-6 text-primary" />
               </div>
-              <h3 className="font-medium text-lg mb-2">Secure & Trusted</h3>
+              <h3 className="font-medium text-lg mb-2">Hire Talents</h3>
               <p className="text-sm text-muted-foreground">
-                Providing a safe and reliable booking experience
+                Book singers, guitarists, bands, and other performers for your event.
               </p>
             </div>
           </div>
         </div>
-        
-        {/* Team Section */}
-        {/* <div className="mb-20">
-          <h2 className="text-3xl font-bold mb-10 text-center">Meet Our Leadership Team</h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
-            {[
-              {
-                name: "Sarah Johnson",
-                role: "CEO & Co-Founder",
-                bio: "Former event planning executive with 12 years of experience in luxury events.",
-                image: "/placeholder.svg?height=400&width=400&text=SJ"
-              },
-              {
-                name: "Michael Chen",
-                role: "CTO & Co-Founder",
-                bio: "Tech entrepreneur with multiple successful marketplace platforms.",
-                image: "/placeholder.svg?height=400&width=400&text=MC"
-              },
-              {
-                name: "Priya Patel",
-                role: "COO",
-                bio: "Operations expert with background in hospitality management.",
-                image: "/placeholder.svg?height=400&width=400&text=PP"
-              },
-              {
-                name: "David Wilson",
-                role: "Head of Partnerships",
-                bio: "Developed relationships with over 500 premium venues nationwide.",
-                image: "/placeholder.svg?height=400&width=400&text=DW"
-              }
-            ].map((member, index) => (
-              <Card key={index} className="overflow-hidden">
-                <div className="relative aspect-square">
-                  <Image 
-                    src={member.image || "/placeholder.svg"} 
-                    alt={member.name}
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-                <CardContent className="p-4">
-                  <h3 className="font-bold text-lg">{member.name}</h3>
-                  <p className="text-sm text-primary mb-2">{member.role}</p>
-                  <p className="text-sm text-muted-foreground">{member.bio}</p>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div> */}
-        
+
         {/* Testimonials */}
         <div className="mb-20">
-          <h2 className="text-3xl font-bold mb-10 text-center">What Our Customers Say</h2>
+          <h2 className="text-3xl font-bold mb-10 text-center">What Our Users Say</h2>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
               {
-                quote: "EventBid helped us secure our dream wedding venue at a price we could actually afford. The bidding process was exciting and transparent.",
-                author: "Jessica & Mark",
-                event: "Wedding at Riverside Estate"
+                quote: "Booking a live band for my wedding was so easy, and paying only 20% upfront gave us more flexibility.",
+                author: "Anjali & Rohit",
+                event: "Wedding with Live Music"
               },
               {
-                quote: "As a corporate event planner, I've saved my clients thousands of dollars using EventBid. The quality of venues is outstanding.",
-                author: "Robert T.",
-                event: "Annual Tech Conference"
+                quote: "The chat feature helped us coordinate with the guitarist directly. Great platform!",
+                author: "Daniel",
+                event: "Birthday Bash"
               },
               {
-                quote: "The 10% deposit system gave us peace of mind that our charity gala venue was secured, while giving us time to fundraise the remaining amount.",
-                author: "Children's Hope Foundation",
-                event: "Annual Fundraiser Gala"
+                quote: "We hosted a college fest and booked multiple artists easily. The status update system was super helpful.",
+                author: "TechnoCultural Club",
+                event: "Annual Fest 2024"
               }
             ].map((testimonial, index) => (
               <Card key={index} className="p-6">
@@ -175,12 +117,12 @@ export default function AboutPage() {
             ))}
           </div>
         </div>
-        
+
         {/* CTA Section */}
         <div className="bg-muted rounded-xl p-8 text-center">
-          <h2 className="text-2xl font-bold mb-4">Ready to Find Your Perfect Venue?</h2>
+          <h2 className="text-2xl font-bold mb-4">Start Planning Your Perfect Event</h2>
           <p className="text-muted-foreground mb-6 max-w-2xl mx-auto">
-            Join thousands of event planners who have discovered the perfect venue through our bidding platform.
+            Discover and book venues, artists, and performers with confidence and ease.
           </p>
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
