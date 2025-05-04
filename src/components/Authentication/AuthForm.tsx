@@ -38,13 +38,13 @@ const AuthForm = () => {
             >
               Need an account? signup
             </Button>
-            <Button
+            {/* <Button
               variant={"link"}
               className="p-0"
               onClick={() => setMode("reset")}
             >
               Forgot password?
-            </Button>
+            </Button> */}
           </div>
         </>
       )}

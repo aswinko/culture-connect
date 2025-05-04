@@ -2,7 +2,7 @@ import { getEventById, getRelatedEvent } from "@/app/actions/event-actions";
 import EventDetail from "./EventDetail";
 import Navbar from "@/components/layout/Navbar";
 import Footer from "@/components/layout/Footer";
-import { getUserById } from "@/app/actions/auth-actions";
+import { getCurrentUser, getUserById } from "@/app/actions/auth-actions";
 interface Params {
   params: Promise<{
     id: string;
@@ -19,7 +19,8 @@ export default async function EventDetailPage({ params }: Params) {
 
   const user = await getUserById(event?.user_id ?? "")
 
-  // const relatedEvents = await getRelatedEvent(id)
+  const curretUser = await getCurrentUser()
+
   if (!event) {
     return <div>No events</div>;
   }
@@ -27,7 +28,7 @@ export default async function EventDetailPage({ params }: Params) {
   return (
     <>
       <Navbar />
-      <EventDetail event={event} relatedEvents={relatedEvents} user={user} />
+      <EventDetail event={event} relatedEvents={relatedEvents} user={user} currentUser={curretUser} />
       <Footer />
     </>
   );

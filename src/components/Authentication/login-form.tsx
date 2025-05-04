@@ -197,7 +197,7 @@ export const LoginForm = ({ className }: { className?: string }) => {
             {loading && <Loader2 className="mr-2 w-4 h-4 animate-spin" />}
             Login
           </Button>
-          <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
+          {/* <div className="after:border-border relative text-center text-sm after:absolute after:inset-0 after:top-1/2 after:z-0 after:flex after:items-center after:border-t">
             <span className="bg-background text-muted-foreground relative z-10 px-2">
               Or continue with
             </span>
@@ -227,7 +227,7 @@ export const LoginForm = ({ className }: { className?: string }) => {
               />
             </svg>
             Login with Google
-          </Button>
+          </Button> */}
         </form>
       </Form>
     </div>

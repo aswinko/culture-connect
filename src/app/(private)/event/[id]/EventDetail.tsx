@@ -14,7 +14,7 @@ import { Event } from "@/types/Event"
 import { User } from "@/types/User"
 import ReviewSection from "@/components/layout/ReviewSection"
 
-const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[] | null; relatedEvents: {relatedEvents: Event[]}}) => {
+const EventDetail = ({ event, relatedEvents, user, currentUser }: { event: Event; user: User[] | null; currentUser: User | null; relatedEvents: {relatedEvents: Event[]}}) => {
     // const toastId = useId()
     
     const router = useRouter()
@@ -88,14 +88,14 @@ const EventDetail = ({ event, relatedEvents, user }: { event: Event; user: User[
                 </div>
                 <div className="space-y-2">
                   {
-                    user? (
+                    !currentUser ? (
+                      <Link href={"/login"} className="w-full bg-black rounded-sm px-4 py-2 text-white">
+                       You need to sign in first, <span className="text-red-500">Click here</span>
+                      </Link> 
+                    ) : (
                       <Button variant="default" className="w-full" onClick={()=> handleCheckout(event?.id || '')}>
                         Proceed to Checkout
-                      </Button> 
-                    ) : (
-                      <Link href={"/login"} className="w-full bg-black rounded-sm px-4 py-2 text-white">
-                        You need to sign in first, <span className="text-red-500">Click here</span>
-                      </Link> 
+                      </Button>
                     )
                   }
 
