@@ -32,6 +32,11 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
   const [isLoading, setIsLoading] = useState(false);
   const [agreementSigned, setAgreementSigned] = useState(false);
 
+  // console.log(bookings);
+
+  
+  
+
   const toastId = useId();
 
   const renderStatusBadge = (status: BookingStatus) => {
@@ -176,6 +181,7 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
         ) : (
           <div className="space-y-6">
             {bookings.map((booking) => {
+
               return (
                 <Card key={booking.id}>
                   <CardHeader className="pb-3">
@@ -226,7 +232,7 @@ export default function MyBookingsPage({ bookings }: { bookings: Booking[] }) {
                             Please read and sign the agreement before proceeding to payment.
                           </p>
                           <div className="flex flex-col md:flex-row items-center justify-between">
-                            <SignAgreement user="aswin" organizer="adhi" />
+                            <SignAgreement user={booking.current_user_name ?? ""} organizer={booking.organizer_name ?? ""} />
                             <label className="flex items-center space-x-2 text-sm">
                               <input
                                 type="checkbox"

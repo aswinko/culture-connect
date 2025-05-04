@@ -46,23 +46,65 @@ export async function createBooking({
   return { success: true }
 }
 
-
 export async function getBookingsByCurrentUser(userId: string) {
-  const supabase = await createClient()
-  const { data, error } = await supabase
+  const supabase = await createClient();
+
+  // 1. Fetch bookings with event info
+  const { data: bookings, error } = await supabase
     .from("booking")
-    .select(
-      `id, event_id, user_id, events(name, price, user_id), date, location, status, created_at, negotiated_amount`,
-    )
+    .select(`
+      id,
+      event_id,
+      user_id,
+      date,
+      location,
+      status,
+      created_at,
+      negotiated_amount,
+      events(
+        id,
+        name,
+        price,
+        user_id
+      )
+    `)
     .eq("user_id", userId)
-    .order("created_at", { ascending: false })
+    .order("created_at", { ascending: false });
 
   if (error) {
-    throw new Error(error.message)
+    throw new Error(error.message);
   }
-  
 
-  return data
+  if (!bookings || bookings.length === 0) return [];
+
+  // 2. Collect all unique user IDs (current user + organizer)
+  const allUserIds = new Set<string>();
+  bookings.forEach((b) => {
+    allUserIds.add(b.user_id); // current user
+    if (b.events?.user_id) allUserIds.add(b.events.user_id); // organizer
+  });
+
+  // 3. Fetch names from user_profiles (must match auth.users.id)
+  const { data: usersData, error: usersError } = await supabase
+    .from("user_profiles") // Your custom profile table
+    .select("user_id, full_name")
+    .in("user_id", Array.from(allUserIds));
+
+  if (usersError) {
+    throw new Error(usersError.message);
+  }
+
+  // 4. Build ID → name map
+  const userMap = new Map(usersData.map((u) => [u.user_id, u.full_name]));
+
+  // 5. Attach readable names to booking data
+  const bookingsWithNames = bookings.map((b) => ({
+    ...b,
+    current_user_name: userMap.get(b.user_id) || "Unknown",
+    organizer_name: userMap.get(b.events?.user_id ?? "") || "Unknown",
+  }));
+
+  return bookingsWithNames;
 }
 
 export const getEventBookingsForOrganizer = async (organizerId: string) => {

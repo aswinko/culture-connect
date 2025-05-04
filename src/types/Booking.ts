@@ -19,4 +19,6 @@ export interface Booking {
     email: string;
     avatar_url: string;
   }
+  organizer_name?: string;
+  current_user_name?: string;
 }

@@ -22,7 +22,6 @@ interface ProfileEditDialogProps {
 
 export default function ProfileEditDialog({ profile, onClose, onSave }: ProfileEditDialogProps) {
   const [formData, setFormData] = useState<UserProfile>({ ...profile })
-  const [newInterest, setNewInterest] = useState("")
   const [isUploading, setIsUploading] = useState(false)
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
