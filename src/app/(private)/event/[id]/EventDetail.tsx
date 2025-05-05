@@ -171,7 +171,7 @@ const EventDetail = ({ event, relatedEvents, user, currentUser }: { event: Event
             </div>
             <div>
               <h3 className="text-xl font-bold mb-4">Previous Works</h3>
-              <video controls className="w-full rounded-lg">
+              <video controls className="w-full rounded-lg max-w-full max-h-[400px]">
                 <source src={event?.video} />
                 Your browser does not support the video tag.
               </video>            

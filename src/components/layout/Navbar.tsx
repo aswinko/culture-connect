@@ -62,7 +62,7 @@ export default async function Navbar() {
           <div aria-label="Toggle dark mode" className="rounded-full">
             
             {/* <MoonIcon className="h-5 w-5 text-gray-500 dark:text-gray-400" /> */}
-            <ToggleTheme />
+            {/* <ToggleTheme /> */}
           </div>
           {/* <AuthStatus /> */}
           
