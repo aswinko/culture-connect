@@ -143,14 +143,14 @@ export default async function DashboardPage() {
               ))}
             </div>
           </CardContent>
-          <CardFooter>
+          {/* <CardFooter>
             <Button asChild variant="outline" className="w-full">
               <Link href="/dashboard/orders">
                 View all orders
                 <ArrowRight className="ml-2 h-4 w-4" />
               </Link>
             </Button>
-          </CardFooter>
+          </CardFooter> */}
         </Card>
         <Card className="lg:col-span-3">
           <CardHeader>
