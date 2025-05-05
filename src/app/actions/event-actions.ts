@@ -251,7 +251,7 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
     // Fetch events where user_id matches the current user
     const { data, error } = await supabase
       .from("events")
-      .select("id, user_id, name, price, description, category_id, image, location, features, created_at")
+      .select("*")
       .eq("user_id", user.user.id)
       .order("created_at", { ascending: false });
   
@@ -317,3 +317,29 @@ export async function addCategory(categoryName: string): Promise<AddCategoryResp
   
     return { success: true }
   }
+
+  export async function updateEventDetails(updatedEvent: Partial<Event> & { id: string }) {
+    const supabase = await createClient()  
+  
+    const { error } = await supabase
+      .from("events")
+      .update({
+        name: updatedEvent.name,
+        price: updatedEvent.price,
+        description: updatedEvent.description,
+        category_id: updatedEvent.category_id,
+        features: updatedEvent.features,
+        image: updatedEvent.image,
+        video: updatedEvent.video,
+        agendas: updatedEvent.agendas,  
+      })
+      .eq("id", updatedEvent.id)
+  
+    if (error) {
+      console.error("Update error:", error)
+      return { success: false, error: error.message }
+    }
+  
+    return { success: true }
+  }
+  
